@@ -22,8 +22,8 @@ for i=1:length(var)
             input.(var_tmp.name) = var_tmp.value;
         case 'fixed'
             assert(all(ismember(var_tmp.value, var_tmp.set)), 'invalid data')
-            var_optim{end+1} = struct('name', var_tmp.name, 'fct_scale',  @(x) get_integer_map(1:length(var_tmp.set), var_tmp.set, x));
-            x0_cell{end+1} = get_integer_map(var_tmp.set, 1:length(var_tmp.set), var_tmp.value);
+            var_optim{end+1} = struct('name', var_tmp.name, 'fct_scale',  @(x) var_tmp.set(x));
+            x0_cell{end+1} = find(ismember(var_tmp.set, var_tmp.value));
             lb(end+1) = 1;
             ub(end+1) = length(var_tmp.set);
             int_con(end+1) = length(var_optim);

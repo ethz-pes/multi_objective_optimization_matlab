@@ -6,7 +6,7 @@ if isnan(n_split)||(n_sweep<=n_split)
 else
     disp('    chunk')
     
-    [n_chunk, idx_chunk] = get_chunk(n_split, n_sweep);
+    [n_chunk, idx_chunk] = get_chunk(n_sweep, n_split);
     
     parfor i=1:n_chunk
         disp(['    ' num2str(i) ' / ' num2str(n_chunk)])
