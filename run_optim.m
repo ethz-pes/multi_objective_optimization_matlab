@@ -5,13 +5,13 @@ addpath(genpath('src'))
 
 %% optim
 param = get_data('brute_force');
-data_brute = get_optim('data', param);
+data_brute = get_optim('brute_force', param);
 
 param = get_data('genetic_single_obj');
-data_ga = get_optim('data', param);
+data_ga = get_optim('genetic_single_obj', param);
 
 param = get_data('genetic_multi_obj');
-data_gamultiobj = get_optim('data', param);
+data_gamultiobj = get_optim('genetic_multi_obj', param);
 
 %% plot
 figure()

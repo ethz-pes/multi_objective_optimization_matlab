@@ -4,7 +4,7 @@ function [n_chunk, idx_chunk] = get_chunk(n_sweep, n_split)
 %   n_sweep - number of data to be splitted in chunks  (integer)
 %   n_split - number of data per chunk  (integer)
 %   n_chunk - number of created chunks  (integer)
-%   idx_chunk - cell with the indices of the chunks  (cell of index array)
+%   idx_chunk - cell with the indices of the chunks  (cell of array of indices)
 %
 %   The division of computational data is useful:
 %      - Dividing the data for parallel loop (loop)

@@ -12,7 +12,7 @@ function [sol, n_sol, n_sim, has_converged, info] = get_solution(solver_name, so
 %       solver_param - description for the brute force solver (solver_name is 'brute_force')
 %           solver_param.fct_best - function selecting the best solutions (function handle)
 %       solver_param - description for the genetic single obj. solver (solver_name is 'genetic_single_obj')
-%           solver_param.fct_obj - function getting a single objectives from the solutions (function handle)
+%           solver_param.fct_obj - function getting single objectives from the solutions (function handle)
 %           solver_param.options - function selecting the best solutions (GaOptions object)
 %       solver_param - description for the genetic multi obj. solver (solver_name is 'genetic_multi_obj')
 %           solver_param.fct_obj - function getting a multiple objectives from the solutions (function handle)
@@ -21,13 +21,13 @@ function [sol, n_sol, n_sim, has_converged, info] = get_solution(solver_name, so
 %      optim.lb - array containing the lower bounds of the variables (array of float)
 %      optim.ub - array containing the upper bounds of the variables (array of float)
 %      optim.int_con - array containing the index of the integer variables (array of integer)
-%      optim.input - struct containing the constant (non-optimized) variables (array of integer)
+%      optim.input - struct containing the constant (non-optimized) variables (struct of scalars)
 %      optim.x0 - matrix containing the scaled initial points (matrix of float)
 %      optim.var_scale - cell containing the function to unscale the variables (cell of struct)
 %         optim.var_scale{i}.name - name of the variable (string)
 %         optim.var_scale{i}.fct_unscale - function for unscaling the variables (function handle)
 %   sol - solution data (struct of arrays)
-%   n_sol - number points contained in the solution (integer)
+%   n_sol - computed number points contained in the solution (integer)
 %   n_sim - number of computed points during the optimization procedure (integer)
 %   has_converged - return status of the algorithm (boolean)
 %   info - information from the solver about the convergence (struct)
@@ -74,17 +74,20 @@ var_scale = optim.var_scale;
 x0 = optim.x0;
 
 % compute all the solution of the initial points
+disp('    init optimization')
 [sol, n_sol] = get_solve_sol(x0, input, var_scale, fct_solve, fct_valid, n_split);
 
+% get the convergence info
+disp('    eval convergence')
+n_sim = size(x0, 1);
+has_converged = true;
+info = struct();
+
 % keep the best solutions
+disp('    eval solution')
 idx_valid = fct_best(sol, n_sol);
 sol = get_struct_idx(sol, idx_valid);
 n_sol = nnz(idx_valid);
-n_sim = size(x0, 1);
-
-% brute force always (or never) converge
-has_converged = true;
-info = struct();
 
 end
 
@@ -112,26 +115,28 @@ lb = optim.lb;
 ub = optim.ub;
 int_con = optim.int_con;
 
-% get the ojective function
-fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
-n_var = size(x0, 2);
-
 % set algorithm default options
+disp('    set options')
 options = optimoptions(options, 'InitialPopulation', x0);
 options = optimoptions(options, 'OutputFcn', @output_fct);
 options = optimoptions(options, 'Vectorized', 'on');
 options = optimoptions(options, 'Display', 'off');
 
 % run the genetic algorithm
+disp('    init optimization')
+n_var = size(x0, 2);
+fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
 [x, f_val, exitflag, output] = ga(fct_optim_tmp, n_var, [], [], [], [], lb, ub, [], int_con, options);
 
 % get the convergence info
+disp('    eval convergence')
 has_converged = (exitflag==1)&&all(isfinite(x))&&isfinite(f_val);
 n_sim = output.funccount;
 info.n_gen = output.generations;
 info.message = output.message;
 
 % get the solution for the optimal point
+disp('    eval solution')
 [sol, n_sol] = get_solve_sol(x, input, var_scale, fct_solve, fct_valid, n_split);
 
 end
@@ -159,15 +164,10 @@ x0 = optim.x0;
 lb = optim.lb;
 ub = optim.ub;
 int_con = optim.int_con;
-
-% check
 assert(isempty(int_con), 'invalid data')
 
-% get the ojective function
-fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
-n_var = size(x0, 2);
-
 % set algorithm default options
+disp('    set options')
 options = optimoptions(options, 'InitialPopulation', x0);
 options = optimoptions(options, 'OutputFcn', @output_fct);
 options = optimoptions(options, 'Vectorized', 'on');
@@ -175,15 +175,20 @@ options = optimoptions(options, 'UseParallel', true);
 options = optimoptions(options, 'Display', 'off');
 
 % run the genetic algorithm
+disp('    init optimization')
+n_var = size(x0, 2);
+fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
 [x, f_val, exitflag, output] = gamultiobj(fct_optim_tmp, n_var, [], [], [], [], lb, ub, [], options);
 
 % get the convergence info
+disp('    eval convergence')
 has_converged = (exitflag==1)&&all(isfinite(x))&&isfinite(f_val);
 n_sim = output.funccount;
 info.n_gen = output.generations;
 info.message = output.message;
 
 % get the solution for the optimal point
+disp('    eval solution')
 [sol, n_sol] = get_solve_sol(x, input, var_scale, fct_solve, fct_valid, n_split);
 
 end

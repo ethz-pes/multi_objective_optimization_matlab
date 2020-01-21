@@ -2,7 +2,7 @@ function struct_out = get_struct_idx(struct_in, idx)
 %GET_STRUCT_IDX Get specified indices in a struct of arrays.
 %   struct_out = GET_STRUCT_IDX(struct_in, idx)
 %   struct_in - input struct to be sliced (struct of arrays)
-%   idx - indices to be selected (index array)
+%   idx - indices to be selected (array of indices)
 %   struct_out - output struct with the selected indices (struct of arrays)
 %
 %   The input struct should have some properties:
