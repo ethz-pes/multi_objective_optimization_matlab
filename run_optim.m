@@ -10,8 +10,11 @@ data_brute = get_optim('bruteforce', param);
 % param = get_data('patternsearch');
 % data_ps = get_optim('patternsearch', param);
 
-param = get_data('fmincon');
-data_ps = get_optim('fmincon', param);
+% param = get_data('fmincon');
+% data_ps = get_optim('fmincon', param);
+
+param = get_data('simulannealbnd');
+data_ps = get_optim('simulannealbnd', param);
 
 % param = get_data('ga');
 % data_ga = get_optim('ga', param);

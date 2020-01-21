@@ -51,6 +51,8 @@ switch solver_name
         [sol, n_sol, n_sim, has_converged, info] = get_patternsearch(solver_param, optim);
     case 'fmincon'
         [sol, n_sol, n_sim, has_converged, info] = get_fmincon(solver_param, optim);
+    case 'simulannealbnd'
+        [sol, n_sol, n_sim, has_converged, info] = get_simulannealbnd(solver_param, optim);
     otherwise
         error('invalid data')
 end
@@ -280,6 +282,47 @@ disp('    eval solution')
 
 end
 
+function [sol, n_sol, n_sim, has_converged, info] = get_simulannealbnd(solver_param, optim)
+
+% extract
+fct_solve = solver_param.fct_solve;
+fct_valid = solver_param.fct_valid;
+fct_obj = solver_param.fct_obj;
+n_split = solver_param.n_split;
+options = solver_param.options;
+input = optim.input;
+var_scale = optim.var_scale;
+x0_vec = optim.x0_vec;
+lb = optim.lb;
+ub = optim.ub;
+int_con = optim.int_con;
+
+% check
+assert(isempty(int_con), 'invalid data')
+
+% set algorithm default options
+disp('    set options')
+options = optimoptions(options, 'OutputFcn', @output_fct_sa);
+options = optimoptions(options, 'Display', 'off');
+
+% run the genetic algorithm
+disp('    init optimization')
+fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
+[x, f_val, exitflag, output] = simulannealbnd(fct_optim_tmp, x0_vec, lb, ub, options);
+
+% get the convergence info
+disp('    eval convergence')
+has_converged = (exitflag==1)&&all(isfinite(x))&&isfinite(f_val);
+n_sim = output.funccount;
+info.iterations = output.iterations;
+info.message = output.message;
+
+% get the solution for the optimal point
+disp('    eval solution')
+[sol, n_sol] = get_solve_sol(x, input, var_scale, fct_solve, fct_valid, n_split);
+
+end
+
 function stop = output_fct_fc(x, optimvalues ,state)
 %OUTPUT_FCN Display function for the genetic algorithms.
 %   [state, options, optchanged] = OUTPUT_FCN(options, state, flag)
@@ -290,6 +333,14 @@ function stop = output_fct_fc(x, optimvalues ,state)
 
 stop = false;
 disp(['    ' state ' / ' num2str(optimvalues.iteration) ' / ' num2str(optimvalues.funccount)])
+
+end
+
+function [stop,options,optchanged] = output_fct_sa(options,optimvalues,flag)
+
+stop = false;
+optchanged = false;
+disp(['    ' flag ' / ' num2str(optimvalues.iteration) ' / ' num2str(optimvalues.funccount)])
 
 end
 
