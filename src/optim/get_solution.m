@@ -47,6 +47,8 @@ switch solver_name
         [sol, n_sol, n_sim, has_converged, info] = get_genetic_single_obj(solver_param, optim);
     case 'genetic_multi_obj'
         [sol, n_sol, n_sim, has_converged, info] = get_genetic_multi_obj(solver_param, optim);
+    case 'pattern_search'
+        [sol, n_sol, n_sim, has_converged, info] = get_pattern_search(solver_param, optim);
     otherwise
         error('invalid data')
 end
@@ -71,15 +73,15 @@ fct_best = solver_param.fct_best;
 n_split = solver_param.n_split;
 input = optim.input;
 var_scale = optim.var_scale;
-x0 = optim.x0;
+x0_mat = optim.x0_mat;
 
 % compute all the solution of the initial points
 disp('    init optimization')
-[sol, n_sol] = get_solve_sol(x0, input, var_scale, fct_solve, fct_valid, n_split);
+[sol, n_sol] = get_solve_sol(x0_mat, input, var_scale, fct_solve, fct_valid, n_split);
 
 % get the convergence info
 disp('    eval convergence')
-n_sim = size(x0, 1);
+n_sim = size(x0_mat, 1);
 has_converged = true;
 info = struct();
 
@@ -110,21 +112,21 @@ n_split = solver_param.n_split;
 options = solver_param.options;
 input = optim.input;
 var_scale = optim.var_scale;
-x0 = optim.x0;
+x0_mat = optim.x0_mat;
 lb = optim.lb;
 ub = optim.ub;
 int_con = optim.int_con;
 
 % set algorithm default options
 disp('    set options')
-options = optimoptions(options, 'InitialPopulation', x0);
-options = optimoptions(options, 'OutputFcn', @output_fct);
+options = optimoptions(options, 'InitialPopulation', x0_mat);
+options = optimoptions(options, 'OutputFcn', @output_fct_ga);
 options = optimoptions(options, 'Vectorized', 'on');
 options = optimoptions(options, 'Display', 'off');
 
 % run the genetic algorithm
 disp('    init optimization')
-n_var = size(x0, 2);
+n_var = size(x0_mat, 2);
 fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
 [x, f_val, exitflag, output] = ga(fct_optim_tmp, n_var, [], [], [], [], lb, ub, [], int_con, options);
 
@@ -160,7 +162,7 @@ n_split = solver_param.n_split;
 options = solver_param.options;
 input = optim.input;
 var_scale = optim.var_scale;
-x0 = optim.x0;
+x0_mat = optim.x0_mat;
 lb = optim.lb;
 ub = optim.ub;
 int_con = optim.int_con;
@@ -168,15 +170,15 @@ assert(isempty(int_con), 'invalid data')
 
 % set algorithm default options
 disp('    set options')
-options = optimoptions(options, 'InitialPopulation', x0);
-options = optimoptions(options, 'OutputFcn', @output_fct);
+options = optimoptions(options, 'InitialPopulation', x0_mat);
+options = optimoptions(options, 'OutputFcn', @output_fct_ga);
 options = optimoptions(options, 'Vectorized', 'on');
 options = optimoptions(options, 'UseParallel', true);
 options = optimoptions(options, 'Display', 'off');
 
 % run the genetic algorithm
 disp('    init optimization')
-n_var = size(x0, 2);
+n_var = size(x0_mat, 2);
 fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
 [x, f_val, exitflag, output] = gamultiobj(fct_optim_tmp, n_var, [], [], [], [], lb, ub, [], options);
 
@@ -193,7 +195,72 @@ disp('    eval solution')
 
 end
 
-function [state, options, optchanged] = output_fct(options, state, flag)
+function [sol, n_sol, n_sim, has_converged, info] = get_pattern_search(solver_param, optim)
+%GET_GENETIC_SINGLE_OBJ Solve a single-objective optimization with the MATLAB genetic algorithm.
+%   [sol, n_sol, n_sim, has_converged, info] = GET_GENETIC_SINGLE_OBJ(solver_param, optim)
+%   solver_param - struct with the solver data (struct)
+%   optim - struct with the parsed variables (struct)
+%   sol - solution data (struct of arrays)
+%   n_sol - number points contained in the solution (integer)
+%   n_sim - number of computed points during the optimization procedure (integer)
+%   has_converged - return status of the algorithm (boolean)
+%   info - information from the solver about the convergence (struct)
+
+% extract
+fct_solve = solver_param.fct_solve;
+fct_valid = solver_param.fct_valid;
+fct_obj = solver_param.fct_obj;
+n_split = solver_param.n_split;
+options = solver_param.options;
+input = optim.input;
+var_scale = optim.var_scale;
+x0_vec = optim.x0_vec;
+lb = optim.lb;
+ub = optim.ub;
+int_con = optim.int_con;
+
+% check
+assert(isempty(int_con), 'invalid data')
+
+% set algorithm default options
+disp('    set options')
+options = optimoptions(options, 'OutputFcn', @output_fct_ps);
+options = optimoptions(options, 'Vectorized', 'on');
+options = optimoptions(options, 'Display', 'off');
+
+% run the genetic algorithm
+disp('    init optimization')
+fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
+[x, f_val, exitflag, output] = patternsearch(fct_optim_tmp, x0_vec, [], [], [], [], lb, ub, [], options);
+
+% get the convergence info
+disp('    eval convergence')
+has_converged = (exitflag==1)&&all(isfinite(x))&&isfinite(f_val);
+n_sim = output.funccount;
+info.iterations = output.iterations;
+info.message = output.message;
+
+% get the solution for the optimal point
+disp('    eval solution')
+[sol, n_sol] = get_solve_sol(x, input, var_scale, fct_solve, fct_valid, n_split);
+
+end
+
+function [stop,options,optchanged] = output_fct_ps(optimvalues,options,flag)
+%OUTPUT_FCN Display function for the genetic algorithms.
+%   [state, options, optchanged] = OUTPUT_FCN(options, state, flag)
+%   options - options of the genetic algorithm (optim object)
+%   state - state information about the solver (struct)
+%   flag - string with the iteration type (string)
+%   optchanged - switch if the options are updated (boolean)
+
+stop = false;
+optchanged = false;
+disp(['    ' flag ' / ' num2str(optimvalues.iteration) ' / ' num2str(optimvalues.funccount)])
+
+end
+
+function [state, options, optchanged] = output_fct_ga(options, state, flag)
 %OUTPUT_FCN Display function for the genetic algorithms.
 %   [state, options, optchanged] = OUTPUT_FCN(options, state, flag)
 %   options - options of the genetic algorithm (optim object)

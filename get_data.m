@@ -52,6 +52,21 @@ switch solver_name
             'fct_obj', fct_obj_vector,...
             'options', options...
             );
+    case 'pattern_search'
+        var_param = get_var_param(false);
+        
+        options = optimoptions(@patternsearch);
+        options = optimoptions(options, 'TolFun', 1e-6);
+        options = optimoptions(options, 'TolCon', 1e-3);
+        options = optimoptions(options, 'TimeLimit', 60.0);
+        
+        solver_param = struct(...
+            'n_split', n_split,...
+            'fct_solve', fct_solve,...
+            'fct_valid', fct_valid,...
+            'fct_obj', fct_obj_scalar,...
+            'options', options...
+            );
     otherwise
         error('invalid data')
 end
@@ -66,8 +81,8 @@ end
 function is_valid = get_valid(sol, n_sol)
 
 is_valid = true(1, n_sol);
-is_valid = is_valid&(sol.y_1<10);
-is_valid = is_valid&(sol.y_2<10);
+is_valid = is_valid&(sol.y_1<15);
+is_valid = is_valid&(sol.y_2<15);
 
 end
 
@@ -96,14 +111,14 @@ end
 function var_param = get_var_param(integer)
 
 var = {};
-var{end+1} = struct('type', 'lin_float', 'name', 'x_1', 'v_1', 0, 'v_2', 3, 'n', 10, 'lb', 0, 'ub', 3);
-var{end+1} = struct('type', 'log_float', 'name', 'x_2', 'v_1', 1, 'v_2', 3, 'n', 10, 'lb', 1, 'ub', 3);
+var{end+1} = struct('type', 'lin_float', 'name', 'x_1', 'v', 1.5, 'vec', linspace(0, 3, 25), 'lb', 0.0, 'ub', 3.0);
+var{end+1} = struct('type', 'log_float', 'name', 'x_2', 'v', 2.0, 'vec', logspace(log10(1), log10(3), 25), 'lb', 1.0, 'ub', 3.0);
 if integer==true
-    var{end+1} = struct('type', 'integer', 'name', 'x_3', 'value', [5 7 9], 'set', [5 7 9]);
-    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'value', 2);
+    var{end+1} = struct('type', 'integer', 'name', 'x_3', 'v', 7 ,'vec', [5 7 9], 'set', [5 7 9]);
+    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
 else
-    var{end+1} = struct('type', 'scalar', 'name', 'x_3', 'value', 5);
-    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'value', 2);
+    var{end+1} = struct('type', 'scalar', 'name', 'x_3', 'v', 5);
+    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
 end
 
 var_param = struct('var', {var}, 'n_max', 100e3);
