@@ -23,7 +23,7 @@ end
 function [sol, idx] = get_sol_vec(input, sweep, fct_solve, fct_valid, idx)
 
 sweep = get_struct_idx(sweep, idx);
-input = get_struct_size(input, length(idx));
+input = get_struct_size(input, nnz(idx));
 
 % merge struct
 field = [fieldnames(input) ; fieldnames(sweep)];
@@ -31,10 +31,10 @@ value = [struct2cell(input) ; struct2cell(sweep)];
 input = cell2struct(value, field);
 
 % compute
-sol = fct_solve(input, length(idx));
+sol = fct_solve(input, nnz(idx));
 
 % filter
-idx = fct_valid(sol, length(idx));
+idx = fct_valid(sol, nnz(idx));
 sol = get_struct_idx(sol, idx);
 
 end

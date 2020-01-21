@@ -5,9 +5,9 @@ function struct_out = get_struct_assemble(struct_in)
 %   struct_out - output struct of arrays (struct of arrays)
 %
 %   The input array of struct should have some properties:
-%       - Struct can be nested (the function is recursive)
-%       - The values of the struct should be 'numeric' or 'logical' arrays
-%       - The values are concatenated respecting the input order
+%      - Struct can be nested (the function is recursive)
+%      - The values of the struct should be 'numeric' or 'logical' arrays
+%      - The values are concatenated respecting the input order
 %
 %   See also GET_STRUCT_IDX, GET_STRUCT_SIZE.
 

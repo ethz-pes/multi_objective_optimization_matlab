@@ -6,9 +6,9 @@ function struct_out = get_struct_idx(struct_in, idx)
 %   struct_out - output struct with the selected indices (struct of arrays)
 %
 %   The input struct should have some properties:
-%       - Struct can be nested (the function is recursive)
-%       - The values of the struct should be 'numeric' or 'logical' arrays
-%       - The values are selected with respect to the provided indices
+%      - Struct can be nested (the function is recursive)
+%      - The values of the struct should be 'numeric' or 'logical' arrays
+%      - The values are selected with respect to the provided indices
 %
 %   See also GET_STRUCT_SIZE, GET_STRUCT_ASSEMBLE.
 

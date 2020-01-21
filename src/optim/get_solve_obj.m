@@ -1,7 +1,7 @@
-function val = get_solve_obj(x, input, var_optim, fct_solve, fct_valid, fct_obj, n_split)
+function val = get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split)
 
 % sweep
-[sweep, n_sweep] = get_sweep_from_x(x, var_optim);
+[sweep, n_sweep] = get_sweep_from_x(x, var_scale);
 
 % sol
 [sol, idx] = get_solve_raw(input, sweep, fct_solve, fct_valid, n_split, n_sweep);

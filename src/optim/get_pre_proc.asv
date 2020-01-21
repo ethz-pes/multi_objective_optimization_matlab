@@ -23,7 +23,7 @@ function [optim, n_var, n_sweep] = get_pre_proc(var_param)
 %              data.var{i}.value - integer with the initial combinations (array of integer)
 %          data.var{i} - description of a constant (non-optimized) variable (type is 'scalar')
 %              data.var{i}.value - value of the constant variable (scalar)
-%   optim - struct with the parsed variables (struct)
+%   optim - struct with the parsed (struct)
 %      optim.lb - array containing the lower bounds of the variables (array of float)
 %      optim.ub - array containing the upper bounds of the variables (array of float)
 %      optim.int_con - array containing the index of the integer variables (array of integer)
@@ -32,8 +32,6 @@ function [optim, n_var, n_sweep] = get_pre_proc(var_param)
 %      optim.var_scale - cell containing the function to unscale the variables (cell of struct)
 %         optim.var_scale{i}.name - name of the variable (string)
 %         optim.var_scale{i}.fct_unscale - function for unscaling the variables (function handle)
-%   n_var - number of input variables used for the optimization (integer)
-%   n_sweep - number of initial points used by the algorithm (integer)
 %
 %   This function performs the following tasks on the variables:
 %      - Find the lower and upper bounds
@@ -120,9 +118,8 @@ for i=1:length(var)
 end
 
 % get the size of the variable
-[n_var, n_sweep] = get_size(x0_cell, n_max);
+[n_sweep, n_var] = get_size(x0_cell, n_max);
 
-% span all the combinations between the initial points
 x0 = get_x0(x0_cell);
 
 % assign the data
@@ -135,29 +132,19 @@ optim.input = input;
 
 end
 
-function [n_var, n_sweep] = get_size(x0_cell, n_max)
-%GET_SIZE Get and check the number of initial points.
-%   [n_var, n_sweep] = GET_SIZE(x0_cell, n_max)
-%   x0_cell - initial points of the different variables (cell of float array)
-%   n_max - maximum number of initial points for avoid out of memory crashed (integer)
-%   n_var - number of input variables used for the optimization (integer)
-%   n_sweep - number of initial points used by the algorithm (integer)
+function [n_sweep, n_var] = get_size(x0_cell, n_max)
+%GET_SIZE Get and check the num.
+%   [n_sweep, n_var] = get_size(x0_cell, n_max)
+%   var_param - struct with the variable description (struct)
 
-% all the combinations between the initial points
 n_sweep = prod(cellfun(@length, x0_cell));
 n_sweep = max(1, n_sweep);
-assert(n_sweep<=n_max, 'invalid data');
-
-% number of optimization variables
 n_var = length(x0_cell);
+assert(n_sweep<=n_max, 'invalid data');
 
 end
 
 function x0 = get_x0(x0_cell)
-%GET_X0 Span all the combinations between the initial points.
-%   x0 = GET_X0(x0_cell)
-%   x0_cell - initial points of the different variables (cell of float array)
-%   x0 - matrix containing the scaled initial points (matrix of float)
 
 if isempty(x0_cell)
     x0 = [];

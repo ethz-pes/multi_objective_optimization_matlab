@@ -6,9 +6,9 @@ function struct_out = get_struct_size(struct_in, n_sol)
 %   struct_out - output struct of arrays (struct of arrays)
 %
 %   The input struct should have some properties:
-%       - Struct can be nested (the function is recursive)
-%       - The values of the struct should be 'numeric' or 'logical' scalars
-%       - The values are transformed into arrays with repmat
+%      - Struct can be nested (the function is recursive)
+%      - The values of the struct should be 'numeric' or 'logical' scalars
+%      - The values are transformed into arrays with repmat
 %
 %   See also GET_STRUCT_IDX, GET_STRUCT_ASSEMBLE.
 
