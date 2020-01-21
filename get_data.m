@@ -8,7 +8,7 @@ fct_obj_scalar = @(sol, n_sol) get_obj_scalar(sol, n_sol);
 fct_obj_vector = @(sol, n_sol) get_obj_vector(sol, n_sol);
 
 switch solver_name
-    case 'brute_force'
+    case 'bruteforce'
         var_param = get_var_param(true);
         solver_param = struct(...
             'n_split', n_split,...
@@ -16,7 +16,7 @@ switch solver_name
             'fct_valid', fct_valid,...
             'fct_best', fct_valid...
             );
-    case 'genetic_single_obj'
+    case 'ga'
         var_param = get_var_param(true);
         
         options = optimoptions (@ga);
@@ -34,7 +34,7 @@ switch solver_name
             'fct_obj', fct_obj_scalar,...
             'options', options...
             );
-    case 'genetic_multi_obj'
+    case 'gamultiobj'
         var_param = get_var_param(false);
         
         options = optimoptions(@gamultiobj);
@@ -52,13 +52,27 @@ switch solver_name
             'fct_obj', fct_obj_vector,...
             'options', options...
             );
-    case 'pattern_search'
+    case 'patternsearch'
         var_param = get_var_param(false);
         
         options = optimoptions(@patternsearch);
         options = optimoptions(options, 'TolFun', 1e-6);
         options = optimoptions(options, 'TolCon', 1e-3);
         options = optimoptions(options, 'TimeLimit', 60.0);
+        
+        solver_param = struct(...
+            'n_split', n_split,...
+            'fct_solve', fct_solve,...
+            'fct_valid', fct_valid,...
+            'fct_obj', fct_obj_scalar,...
+            'options', options...
+            );
+    case 'fmincon'
+        var_param = get_var_param(false);
+        
+        options = optimoptions(@fmincon);
+        options = optimoptions(options, 'TolFun', 1e-6);
+        options = optimoptions(options, 'TolCon', 1e-3);
         
         solver_param = struct(...
             'n_split', n_split,...

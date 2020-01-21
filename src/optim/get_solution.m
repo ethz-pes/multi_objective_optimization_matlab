@@ -2,19 +2,19 @@ function [sol, n_sol, n_sim, has_converged, info] = get_solution(solver_name, so
 %GET_SOLUTION Solve the multi-objective optimization problem with different solvers.
 %   [sol, n_sol, n_sim, has_converged, info] = GET_SOLUTION(solver_name, solver_param, optim)
 %   solver_name - name of the solver (string)
-%       'brute_force' - test all the initial points, nothing more
-%       'genetic_single_obj' - MATLAB genetic algoritm 'ga'
-%       'genetic_multi_obj' - MATLAB genetic algoritm 'gamultiobj'
+%       'bruteforce' - test all the initial points, nothing more
+%       'ga' - MATLAB genetic algoritm 'ga'
+%       'gamultiobj' - MATLAB genetic algoritm 'gamultiobj'
 %   solver_param - struct with the solver data (struct)
 %       solver_param.fct_solve - function computing the solution from the inputs (function handle)
 %       solver_param.fct_valid - function determining if a solution is valid to save memory (function handle)
 %       solver_param.n_split - maximum number of solution evaluated in one vectorized call (integer)
-%       solver_param - description for the brute force solver (solver_name is 'brute_force')
+%       solver_param - description for the brute force solver (solver_name is 'bruteforce')
 %           solver_param.fct_best - function selecting the best solutions (function handle)
-%       solver_param - description for the genetic single obj. solver (solver_name is 'genetic_single_obj')
+%       solver_param - description for the genetic single obj. solver (solver_name is 'ga')
 %           solver_param.fct_obj - function getting single objectives from the solutions (function handle)
 %           solver_param.options - function selecting the best solutions (GaOptions object)
-%       solver_param - description for the genetic multi obj. solver (solver_name is 'genetic_multi_obj')
+%       solver_param - description for the genetic multi obj. solver (solver_name is 'gamultiobj')
 %           solver_param.fct_obj - function getting a multiple objectives from the solutions (function handle)
 %           solver_param.options - function selecting the best solutions (GamultiobjOptions object)
 %   optim - struct with the parsed variables (struct)
@@ -33,7 +33,7 @@ function [sol, n_sol, n_sim, has_converged, info] = get_solution(solver_name, so
 %   info - information from the solver about the convergence (struct)
 %
 %   This function performs optimization with different solvers.
-%   Please note that the 'genetic_multi_obj' cannot deal with integer variables.
+%   Please note that the 'gamultiobj' cannot deal with integer variables.
 %
 %   See also GET_OPTIM, GET_PRE_PROC, GET_SOLVE_SOL, GET_SOLVE_OBJ, GA GAMULTIOBJ.
 
@@ -41,23 +41,25 @@ function [sol, n_sol, n_sim, has_converged, info] = get_solution(solver_name, so
 %   2020 - BSD License.
 
 switch solver_name
-    case 'brute_force'
-        [sol, n_sol, n_sim, has_converged, info] = get_brute_force(solver_param, optim);
-    case 'genetic_single_obj'
-        [sol, n_sol, n_sim, has_converged, info] = get_genetic_single_obj(solver_param, optim);
-    case 'genetic_multi_obj'
-        [sol, n_sol, n_sim, has_converged, info] = get_genetic_multi_obj(solver_param, optim);
-    case 'pattern_search'
-        [sol, n_sol, n_sim, has_converged, info] = get_pattern_search(solver_param, optim);
+    case 'bruteforce'
+        [sol, n_sol, n_sim, has_converged, info] = get_bruteforce(solver_param, optim);
+    case 'ga'
+        [sol, n_sol, n_sim, has_converged, info] = get_ga(solver_param, optim);
+    case 'gamultiobj'
+        [sol, n_sol, n_sim, has_converged, info] = get_gamultiobj(solver_param, optim);
+    case 'patternsearch'
+        [sol, n_sol, n_sim, has_converged, info] = get_patternsearch(solver_param, optim);
+    case 'fmincon'
+        [sol, n_sol, n_sim, has_converged, info] = get_fmincon(solver_param, optim);
     otherwise
         error('invalid data')
 end
 
 end
 
-function [sol, n_sol, n_sim, has_converged, info] = get_brute_force(solver_param, optim)
-%GET_BRUTE_FORCE Solve a multi-objective optimization with brute force.
-%   [sol, n_sol, n_sim, has_converged, info] = GET_BRUTE_FORCE(solver_param, optim)
+function [sol, n_sol, n_sim, has_converged, info] = get_bruteforce(solver_param, optim)
+%GET_bruteforce Solve a multi-objective optimization with brute force.
+%   [sol, n_sol, n_sim, has_converged, info] = GET_bruteforce(solver_param, optim)
 %   solver_param - struct with the solver data (struct)
 %   optim - struct with the parsed variables (struct)
 %   sol - solution data (struct of arrays)
@@ -93,9 +95,9 @@ n_sol = nnz(idx_valid);
 
 end
 
-function [sol, n_sol, n_sim, has_converged, info] = get_genetic_single_obj(solver_param, optim)
-%GET_GENETIC_SINGLE_OBJ Solve a single-objective optimization with the MATLAB genetic algorithm.
-%   [sol, n_sol, n_sim, has_converged, info] = GET_GENETIC_SINGLE_OBJ(solver_param, optim)
+function [sol, n_sol, n_sim, has_converged, info] = get_ga(solver_param, optim)
+%GET_ga Solve a single-objective optimization with the MATLAB genetic algorithm.
+%   [sol, n_sol, n_sim, has_converged, info] = GET_ga(solver_param, optim)
 %   solver_param - struct with the solver data (struct)
 %   optim - struct with the parsed variables (struct)
 %   sol - solution data (struct of arrays)
@@ -143,9 +145,9 @@ disp('    eval solution')
 
 end
 
-function [sol, n_sol, n_sim, has_converged, info] = get_genetic_multi_obj(solver_param, optim)
-%GET_GENETIC_MULTI_OBJ Solve a multi-objective optimization with the MATLAB genetic algorithm.
-%   [sol, n_sol, n_sim, has_converged, info] = GET_GENETIC_MULTI_OBJ(solver_param, optim)
+function [sol, n_sol, n_sim, has_converged, info] = get_gamultiobj(solver_param, optim)
+%GET_gamultiobj Solve a multi-objective optimization with the MATLAB genetic algorithm.
+%   [sol, n_sol, n_sim, has_converged, info] = GET_gamultiobj(solver_param, optim)
 %   solver_param - struct with the solver data (struct)
 %   optim - struct with the parsed variables (struct)
 %   sol - solution data (struct of arrays)
@@ -195,16 +197,7 @@ disp('    eval solution')
 
 end
 
-function [sol, n_sol, n_sim, has_converged, info] = get_pattern_search(solver_param, optim)
-%GET_GENETIC_SINGLE_OBJ Solve a single-objective optimization with the MATLAB genetic algorithm.
-%   [sol, n_sol, n_sim, has_converged, info] = GET_GENETIC_SINGLE_OBJ(solver_param, optim)
-%   solver_param - struct with the solver data (struct)
-%   optim - struct with the parsed variables (struct)
-%   sol - solution data (struct of arrays)
-%   n_sol - number points contained in the solution (integer)
-%   n_sim - number of computed points during the optimization procedure (integer)
-%   has_converged - return status of the algorithm (boolean)
-%   info - information from the solver about the convergence (struct)
+function [sol, n_sol, n_sim, has_converged, info] = get_patternsearch(solver_param, optim)
 
 % extract
 fct_solve = solver_param.fct_solve;
@@ -243,6 +236,60 @@ info.message = output.message;
 % get the solution for the optimal point
 disp('    eval solution')
 [sol, n_sol] = get_solve_sol(x, input, var_scale, fct_solve, fct_valid, n_split);
+
+end
+
+function [sol, n_sol, n_sim, has_converged, info] = get_fmincon(solver_param, optim)
+
+% extract
+fct_solve = solver_param.fct_solve;
+fct_valid = solver_param.fct_valid;
+fct_obj = solver_param.fct_obj;
+n_split = solver_param.n_split;
+options = solver_param.options;
+input = optim.input;
+var_scale = optim.var_scale;
+x0_vec = optim.x0_vec;
+lb = optim.lb;
+ub = optim.ub;
+int_con = optim.int_con;
+
+% check
+assert(isempty(int_con), 'invalid data')
+
+% set algorithm default options
+disp('    set options')
+options = optimoptions(options, 'OutputFcn', @output_fct_fc);
+options = optimoptions(options, 'Display', 'off');
+
+% run the genetic algorithm
+disp('    init optimization')
+fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_valid, fct_obj, n_split);
+[x, f_val, exitflag, output] = fmincon(fct_optim_tmp, x0_vec, [], [], [], [], lb, ub, [], options);
+
+% get the convergence info
+disp('    eval convergence')
+has_converged = (exitflag==1)&&all(isfinite(x))&&isfinite(f_val);
+n_sim = output.funcCount;
+info.iterations = output.iterations;
+info.message = output.message;
+
+% get the solution for the optimal point
+disp('    eval solution')
+[sol, n_sol] = get_solve_sol(x, input, var_scale, fct_solve, fct_valid, n_split);
+
+end
+
+function stop = output_fct_fc(x, optimvalues ,state)
+%OUTPUT_FCN Display function for the genetic algorithms.
+%   [state, options, optchanged] = OUTPUT_FCN(options, state, flag)
+%   options - options of the genetic algorithm (optim object)
+%   state - state information about the solver (struct)
+%   flag - string with the iteration type (string)
+%   optchanged - switch if the options are updated (boolean)
+
+stop = false;
+disp(['    ' state ' / ' num2str(optimvalues.iteration) ' / ' num2str(optimvalues.funccount)])
 
 end
 

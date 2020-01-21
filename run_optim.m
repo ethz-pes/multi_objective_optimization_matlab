@@ -4,17 +4,20 @@ close('all')
 addpath(genpath('src'))
 
 %% optim
-param = get_data('brute_force');
-data_brute = get_optim('brute_force', param);
+param = get_data('bruteforce');
+data_brute = get_optim('bruteforce', param);
 
-param = get_data('pattern_search');
-data_ps = get_optim('pattern_search', param);
+% param = get_data('patternsearch');
+% data_ps = get_optim('patternsearch', param);
 
-% param = get_data('genetic_single_obj');
-% data_ga = get_optim('genetic_single_obj', param);
+param = get_data('fmincon');
+data_ps = get_optim('fmincon', param);
+
+% param = get_data('ga');
+% data_ga = get_optim('ga', param);
 % 
-% param = get_data('genetic_multi_obj');
-% data_gamultiobj = get_optim('genetic_multi_obj', param);
+% param = get_data('gamultiobj');
+% data_gamultiobj = get_optim('gamultiobj', param);
 
 %% plot
 figure()
