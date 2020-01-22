@@ -54,7 +54,6 @@ function [optim, n_var, n_sweep] = get_pre_proc(var_param)
 % extract the provided data
 var = var_param.var;
 n_max = var_param.n_max;
-fct_select = var_param.fct_select;
 
 % init the output
 var_scale = {};
@@ -84,14 +83,16 @@ for i=1:length(var)
 
             % mapping integer variables from [x1, x1, ..., xn] to [1, 2, ..., n]
             var_scale{end+1} = struct('name', var_tmp.name, 'fct_unscale',  @(x) fct_unscale(var_tmp.set, x));
-            x0_cell{end+1} = fct_scale(var_tmp.set, var_tmp.vec);
+            x0_cell{end+1} = fct_scale(var_tmp.set, var_tmp.vec));
             
             % flag the integer variable
             int_con(end+1) = length(var_scale);
-                        
+            
             % set the bounds in the transformed coordinates
-            lb(end+1) = min(fct_scale(var_tmp.set, var_tmp.set));
-            ub(end+1) = max(fct_scale(var_tmp.set, var_tmp.set));
+            lb(end+1) = 1;
+            ub(end+1) = length(var_tmp.set);
+            
+            keyboard
         case 'float'
             % check that the initial points respect the bounds
             assert(length(var_tmp.v)==1, 'invalid data')
@@ -113,21 +114,21 @@ for i=1:length(var)
     end
 end
 
-% compute the input
-fct_input = @(x) get_input_from_x(x, input, var_scale);
-
-% span all the combinations between the initial points
-x0_mat = get_x0(x0_cell, fct_input, fct_select);
-
 % get the size of the variable
 [n_var, n_sweep] = get_size(x0_cell, n_max);
 
+% span all the combinations between the initial points
+x0_mat = get_x0(x0_cell);
+
 % assign the data
-optim.fct_input = fct_input;
+optim.fct_sweep = @(x) get_sweep_from_x(x, var_scale);
 optim.lb = lb;
 optim.ub = ub;
 optim.int_con = int_con;
 optim.x0_mat = x0_mat;
+optim.input = input;
+
+keyboard
 
 end
 
@@ -151,27 +152,21 @@ assert(n_var>0, 'invalid data');
 
 end
 
-function x0_mat = get_x0(x0_cell, fct_input, fct_select)
+function x0_mat = get_x0(x0_cell)
 %GET_X0 Span all the combinations between the initial points.
 %   x0 = GET_X0(x0_cell)
 %   x0_cell - initial points of the different variables (cell of float arrays)
 %   x0_mat - matrix containing the scaled initial points (matrix of float)
 
-% get all the combinations
 x0_tmp = cell(1,length(x0_cell));
 [x0_tmp{:}] = ndgrid(x0_cell{:});
 for i=1:length(x0_tmp)
     x0_mat(:,i) = x0_tmp{i}(:);
 end
 
-% filter the combinations
-[input, n_sweep] = fct_input(x0_mat);
-idx_select = fct_select(input, n_sweep);
-x0_mat = x0_mat(idx_select, :);
-
 end
 
-function [input, n_sweep] = get_input_from_x(x, input, var_scale)
+function [sweep, n_sweep] = get_sweep_from_x(x, var_scale)
 %GET_SWEEP_FROM_X Parse and unscale the optimized variables.
 %   [sweep, n_sweep] = GET_SWEEP_FROM_X(x, var_scale)
 %   x - matrix containing the scaled points to be computed (matrix of float)
@@ -195,22 +190,14 @@ for i=1:length(var_scale)
     sweep.(name) = fct_unscale(x_tmp);
 end
 
-% extend the constant variable to the chunk size
-input = get_struct_size(input, n_sweep);
-
-% merge the optimized and constant variables
-field = [fieldnames(input) ; fieldnames(sweep)];
-value = [struct2cell(input) ; struct2cell(sweep)];
-input = cell2struct(value, field);
-
 end
 
 function [fct_scale, fct_unscale] = get_scale(scale)
 
 switch scale
     case 'integer'
-        fct_scale = @(set, vec) find(ismember(set, vec));
-        fct_unscale = @(set, vec) set(vec);
+        fct_scale = @(set, vec) set(vec);
+        fct_unscale = @(set, vec) find(ismember(set, vec));
     case 'lin'
         fct_scale = @(x) x;
         fct_unscale = @(x) x;

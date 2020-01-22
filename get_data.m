@@ -2,31 +2,34 @@ function param = get_data(solver_name)
 
 %% options
 n_split = 1000;
-fct_solve = @(input, n_sol) get_solve(input, n_sol);
-fct_valid = @(sol, n_sol) get_valid(sol, n_sol);
-fct_obj_scalar = @(sol, n_sol) get_obj_scalar(sol, n_sol);
-fct_obj_vector = @(sol, n_sol) get_obj_vector(sol, n_sol);
 
 switch solver_name
     case 'bruteforce'
         var_param = get_var_param(true);
+        
+        options = struct('ConstraintToleranceEq', 1e-3, 'ConstraintToleranceInEq', 1e-3);
+        
         solver_param = struct(...
             'n_split', n_split,...
-            'fct_solve', fct_solve,...
-            'fct_best', fct_valid...
+            'fct_solve', @get_solve,...
+            'fct_obj', @get_obj_scalar,...
+            'fct_con', @get_con,...
+            'options', options...
             );
     case 'ga'
         var_param = get_var_param(true);
         
         options = optimoptions (@ga);
         options = optimoptions(options, 'TolFun', 1e-6);
+        options = optimoptions(options, 'ConstraintTolerance', 1e-3);
         options = optimoptions(options, 'Generations', 20);
-        options = optimoptions(options, 'PopulationSize', 500);
+        options = optimoptions(options, 'PopulationSize', 2000);
         
         solver_param = struct(...
             'n_split', n_split,...
-            'fct_solve', fct_solve,...
-            'fct_obj', fct_obj_scalar,...
+            'fct_solve', @get_solve,...
+            'fct_obj', @get_obj_scalar,...
+            'fct_con', @get_con,...
             'options', options...
             );
     case 'gamultiobj'
@@ -34,38 +37,15 @@ switch solver_name
         
         options = optimoptions(@gamultiobj);
         options = optimoptions(options, 'TolFun', 1e-6);
+        options = optimoptions(options, 'ConstraintTolerance', 1e-3);
         options = optimoptions(options, 'Generations', 20);
-        options = optimoptions(options, 'PopulationSize', 500);
+        options = optimoptions(options, 'PopulationSize', 700);
         
         solver_param = struct(...
             'n_split', n_split,...
-            'fct_solve', fct_solve,...
-            'fct_obj', fct_obj_vector,...
-            'options', options...
-            );
-    case 'paretosearch'
-        var_param = get_var_param(false);
-        
-        options = optimoptions(@paretosearch);
-        
-        solver_param = struct(...
-            'n_split', n_split,...
-            'fct_solve', fct_solve,...
-            'fct_obj', fct_obj_vector,...
-            'options', options...
-            );
-    case 'particleswarm'
-        var_param = get_var_param(false);
-        
-        options = optimoptions(@particleswarm);
-        options = optimoptions(options, 'TolFun', 1e-6);
-        options = optimoptions(options, 'SwarmSize', 700);
-        options = optimoptions(options, 'MaxIterations', 20);
-        
-        solver_param = struct(...
-            'n_split', n_split,...
-            'fct_solve', fct_solve,...
-            'fct_obj', fct_obj_scalar,...
+            'fct_solve', @get_solve,...
+            'fct_obj', @get_obj_vector,...
+            'fct_con', @get_con,...
             'options', options...
             );
     otherwise
@@ -79,41 +59,32 @@ param.solver_name = solver_name;
 
 end
 
-function is_valid = get_valid(sol, n_sol)
+function [cnq, ceq] = get_con(sol, n_sweep)
 
-is_valid = true(1, n_sol);
-is_valid = is_valid&(sol.y_1<15);
-is_valid = is_valid&(sol.y_2<15);
+cnq = [sol.y_1-10 ; sol.y_2-10];
+ceq = [];
 
 end
 
 function val = get_obj_scalar(sol, n_sol)
 
-% objective
-if n_sol==0
-    val = NaN(1, 0);
-else
-    val = sol.y_1+sol.y_2;
-end
+keyboard
+
+val = sol.y_1+sol.y_2;
 
 end
 
 function val = get_obj_vector(sol, n_sol)
 
-% objective
-if n_sol==0
-    val = NaN(2, 0);
-else
-    val = [sol.y_1 ; sol.y_2];
-end
+val = [sol.y_1 ; sol.y_2];
 
 end
 
 function var_param = get_var_param(integer)
 
 var = {};
-var{end+1} = struct('type', 'lin_float', 'name', 'x_1', 'v', 1.5, 'vec', linspace(0, 3, 25), 'lb', 0.0, 'ub', 3.0);
-var{end+1} = struct('type', 'log_float', 'name', 'x_2', 'v', 2.0, 'vec', logspace(log10(1), log10(3), 25), 'lb', 1.0, 'ub', 3.0);
+var{end+1} = struct('type', 'float', 'name', 'x_1', 'scale', 'lin', 'v', 1.5, 'vec', linspace(0, 3, 25), 'lb', 0.0, 'ub', 3.0);
+var{end+1} = struct('type', 'float', 'name', 'x_2', 'scale', 'log', 'v', 2.0, 'vec', logspace(log10(1), log10(3), 25), 'lb', 1.0, 'ub', 3.0);
 if integer==true
     var{end+1} = struct('type', 'integer', 'name', 'x_3', 'v', 7 ,'vec', [5 7 9], 'set', [5 7 9]);
     var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
@@ -122,7 +93,7 @@ else
     var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
 end
 
-var_param = struct('var', {var}, 'n_max', 100e3);
+var_param = struct('var', {var}, 'n_max', 100e3, 'fct_select', @(input, n_sol) true(1, n_sol));
 
 end
 
