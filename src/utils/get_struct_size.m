@@ -29,7 +29,7 @@ for i=1:length(field)
         % for values, expansion
         assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid data')
         assert(length(struct_in_tmp)==1, 'invalid data')
-        struct_out.(field{i}) = repmat(struct_in_tmp, [1 n_sol]);
+        struct_out.(field{i}) = repmat(struct_in_tmp, [1, n_sol]);
     end
 end
 

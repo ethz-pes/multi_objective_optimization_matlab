@@ -1,7 +1,7 @@
 function param = get_data(solver_name)
 
 %% options
-n_split = 1000;
+n_split = 500;
 
 switch solver_name
     case 'bruteforce'
@@ -29,7 +29,8 @@ switch solver_name
             'n_split', n_split,...
             'fct_solve', @get_solve,...
             'fct_obj', @get_obj_scalar,...
-            'fct_con', @get_con,...
+            'fct_con_cnq', @get_con_cnq,...
+            'fct_con_ceq', @get_con_ceq,...
             'options', options...
             );
     case 'gamultiobj'
@@ -59,41 +60,67 @@ param.solver_name = solver_name;
 
 end
 
-function [cnq, ceq] = get_con(sol, n_sweep)
+function cnq = get_con_cnq(input, n_sol)
 
-cnq = [sol.y_1-10 ; sol.y_2-10];
+assert(n_sol>=1, 'invalid data')
+
+% assign
+x_1 = input.x_1;
+x_2 = input.x_2;
+x_3 = input.x_3;
+x_4 = input.x_4;
+
+% compute
+y_1 = x_1.^2+x_2.^2+x_3;
+y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
+
+% assign
+cnq = [y_1-10 ; y_2-10];
+
+end
+
+function ceq = get_con_ceq(input, n_sol)
+
 ceq = [];
 
 end
 
-function val = get_obj_scalar(sol, n_sol)
 
-keyboard
+function val = get_obj_scalar(input, n_sol)
 
-val = sol.y_1+sol.y_2;
+assert(n_sol>=1, 'invalid data')
+
+% assign
+x_1 = input.x_1;
+x_2 = input.x_2;
+x_3 = input.x_3;
+x_4 = input.x_4;
+
+% compute
+y_1 = x_1.^2+x_2.^2+x_3;
+y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
+
+% assign
+val = y_1+y_2;
 
 end
 
-function val = get_obj_vector(sol, n_sol)
+function val = get_obj_vector(input, n_sol)
 
-val = [sol.y_1 ; sol.y_2];
+assert(n_sol>=1, 'invalid data')
 
-end
+% assign
+x_1 = input.x_1;
+x_2 = input.x_2;
+x_3 = input.x_3;
+x_4 = input.x_4;
 
-function var_param = get_var_param(integer)
+% compute
+y_1 = x_1.^2+x_2.^2+x_3;
+y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
 
-var = {};
-var{end+1} = struct('type', 'float', 'name', 'x_1', 'scale', 'lin', 'v', 1.5, 'vec', linspace(0, 3, 25), 'lb', 0.0, 'ub', 3.0);
-var{end+1} = struct('type', 'float', 'name', 'x_2', 'scale', 'log', 'v', 2.0, 'vec', logspace(log10(1), log10(3), 25), 'lb', 1.0, 'ub', 3.0);
-if integer==true
-    var{end+1} = struct('type', 'integer', 'name', 'x_3', 'v', 7 ,'vec', [5 7 9], 'set', [5 7 9]);
-    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
-else
-    var{end+1} = struct('type', 'scalar', 'name', 'x_3', 'v', 5);
-    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
-end
-
-var_param = struct('var', {var}, 'n_max', 100e3, 'fct_select', @(input, n_sol) true(1, n_sol));
+% assign
+val = [y_1 ; y_2];
 
 end
 
@@ -120,3 +147,21 @@ sol.x_3 = x_3;
 sol.x_4 = x_4;
 
 end
+
+function var_param = get_var_param(integer)
+
+var = {};
+var{end+1} = struct('type', 'float', 'name', 'x_1', 'scale', 'lin', 'v', 1.5, 'vec', linspace(0, 3, 25), 'lb', 0.0, 'ub', 3.0);
+var{end+1} = struct('type', 'float', 'name', 'x_2', 'scale', 'log', 'v', 2.0, 'vec', logspace(log10(1), log10(3), 25), 'lb', 1.0, 'ub', 3.0);
+if integer==true
+    var{end+1} = struct('type', 'integer', 'name', 'x_3', 'v', 7 ,'vec', [5 7 9], 'set', [5 7 9]);
+    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
+else
+    var{end+1} = struct('type', 'scalar', 'name', 'x_3', 'v', 5);
+    var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
+end
+
+var_param = struct('var', {var}, 'n_max', 100e3, 'fct_select', @(input, n_sol) true(1, n_sol));
+
+end
+

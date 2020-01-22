@@ -109,11 +109,11 @@ function [sol, n_sol, n_sim, has_converged, info] = get_ga(solver_param, optim)
 % extract
 fct_solve = solver_param.fct_solve;
 fct_obj = solver_param.fct_obj;
-fct_con = solver_param.fct_con;
+fct_con_cnq = solver_param.fct_con_cnq;
+fct_con_ceq = solver_param.fct_con_ceq;
 n_split = solver_param.n_split;
 options = solver_param.options;
-input = optim.input;
-var_scale = optim.var_scale;
+fct_input = optim.fct_input;
 x0_mat = optim.x0_mat;
 lb = optim.lb;
 ub = optim.ub;
@@ -129,8 +129,14 @@ options = optimoptions(options, 'Display', 'off');
 % run the genetic algorithm
 disp('    init optimization')
 n_var = size(x0_mat, 2);
-fct_optim_tmp = @(x) get_solve_obj(x, input, var_scale, fct_solve, fct_obj, n_split);
-fct_con_tmp = @(x) get_solve_con(x, input, var_scale, fct_solve, fct_con, n_split);
+
+fct_obj_tmp = @(x) get_solve_sol(x, fct_input, fct_obj, n_split);
+fct_con_cnq_tmp = @(x) get_solve_sol(x, fct_input, fct_con_cnq, n_split);
+fct_con_ceq_tmp = @(x) get_solve_sol(x, fct_input, fct_con_ceq, n_split);
+fct_solve_tmp = @(x) get_solve_sol(x, fct_input, fct_solve, n_split);
+
+fct_optim_tmp = @(x) get_obj(x, fct_obj_tmp);
+fct_con_tmp = @(x) get_con(x, fct_con_cnq_tmp, fct_con_ceq_tmp);
 [x, f_val, exitflag, output] = ga(fct_optim_tmp, n_var, [], [], [], [], lb, ub, fct_con_tmp, int_con, options);
 
 % get the convergence info
@@ -140,11 +146,11 @@ n_sol = size(x, 1);
 n_sim = output.funccount;
 info.n_gen = output.generations;
 info.message = output.message;
-info.exitflag = output.exitflag;
+info.exitflag = exitflag;
 
 % get the solution for the optimal point
 disp('    eval solution')
-sol = get_solve_sol(x, input, var_scale, fct_solve, n_split);
+sol = fct_solve_tmp(x);
 
 end
 
@@ -215,3 +221,20 @@ optchanged = false;
 disp(['    ' flag ' / ' num2str(state.Generation) ' / ' num2str(state.FunEval)])
 
 end
+
+function val = get_obj(x, fct)
+
+val = fct(x);
+val = val.';
+
+end
+
+function [c, ceq] = get_con(x, fct_con_cnq, fct_con_ceq)
+
+c = fct_con_cnq(x);
+ceq = fct_con_ceq(x);
+c = c.';
+ceq = ceq.';
+
+end
+

@@ -14,6 +14,19 @@ function struct_out = get_struct_assemble(struct_in)
 %   Thomas Guillod.
 %   2020 - BSD License.
 
+struct_in = [struct_in{:}];
+
+if isstruct(struct_in)
+    struct_out = merge_struct(struct_in);
+else
+    assert(isnumeric(struct_in)||islogical(struct_in), 'invalid data')
+    struct_out = struct_in;
+end
+
+end
+
+function struct_out = merge_struct(struct_in)
+
 % init the data
 struct_out = struct();
 field = fieldnames(struct_in);
@@ -25,7 +38,7 @@ for i=1:length(field)
     
     if isstruct(struct_in_tmp)
         % for struct, recursion
-        struct_out.(field{i}) = get_struct_assemble(struct_in_tmp);
+        struct_out.(field{i}) = merge_struct(struct_in_tmp);
     else
         % for values, assign
         assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid data')
