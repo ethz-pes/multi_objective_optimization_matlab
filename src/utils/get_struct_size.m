@@ -28,8 +28,8 @@ for i=1:length(field)
         struct_out.(field{i}) = get_struct_size(struct_in_tmp, n_size);
     else
         % for values, expansion
-        assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid data')
-        assert(length(struct_in_tmp)==1, 'invalid data')
+        assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid type')
+        assert(length(struct_in_tmp)==1, 'invalid length')
         struct_out.(field{i}) = repmat(struct_in_tmp, [1, n_size]);
     end
 end

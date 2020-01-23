@@ -1,7 +1,8 @@
-function struct_out = get_struct_assemble(struct_in)
+function struct_out = get_struct_assemble(struct_in, n_size)
 %GET_STRUCT_ASSEMBLE Assemble array of struct of arrays into a struct of arrays.
 %   struct_out = GET_STRUCT_ASSEMBLE(struct_in)
 %   struct_in - input array of struct to be concatenated (array of struct of arrays)
+%   n_size - desired size for the arrays (integer)
 %   struct_out - output struct of arrays (struct of arrays)
 %
 %   The input array of struct should have some properties:
@@ -26,10 +27,11 @@ for i=1:length(field)
     
     if isstruct(struct_in_tmp)
         % for struct, recursion
-        struct_out.(field{i}) = merge_struct(struct_in_tmp);
+        struct_out.(field{i}) = merge_struct(struct_in_tmp, n_size);
     else
         % for values, assign
-        assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid data')
+        assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid type')
+        assert(size(struct_in_tmp, 2)==n_size, 'invalid type')
         struct_out.(field{i}) = struct_in_tmp;
     end
 end

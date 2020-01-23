@@ -26,7 +26,7 @@ switch solver_name
         options = optimoptions(options, 'PopulationSize', 700);
         solver_param = get_solr_param(true, options);
     otherwise
-        error('invalid data')
+        error('invalid solver_name')
 end
 
 % assign
@@ -40,7 +40,7 @@ function solver_param = get_solr_param(vector, options)
 
 solver_param.n_split = 500;
 solver_param.options = options;
-solver_param.fct_struct = @get_struct;
+solver_param.fct_output = @get_output;
 solver_param.fct_con_c = @get_con_c;
 solver_param.fct_con_ceq = @get_con_ceq;
 
@@ -55,59 +55,57 @@ end
 function var_param = get_var_param(integer)
 
 var = {};
-var{end+1} = struct('type', 'float', 'name', 'x_1', 'scale', 'lin', 'v', 1.5, 'vec', linspace(0, 3, 25), 'lb', 0.0, 'ub', 3.0);
-var{end+1} = struct('type', 'float', 'name', 'x_2', 'scale', 'log', 'v', 2.0, 'vec', logspace(log10(1), log10(3), 25), 'lb', 1.0, 'ub', 3.0);
+var{end+1} = struct('type', 'float', 'name', 'x_1', 'scale', 'lin', 'vec', linspace(0, 3, 25), 'lb', 0.0, 'ub', 3.0);
+var{end+1} = struct('type', 'float', 'name', 'x_2', 'scale', 'log', 'vec', logspace(log10(1), log10(3), 25), 'lb', 1.0, 'ub', 3.0);
 if integer==true
-    var{end+1} = struct('type', 'integer', 'name', 'x_3', 'v', 7 ,'vec', [5 7 9], 'set', [5 7 9]);
+    var{end+1} = struct('type', 'integer', 'name', 'x_3','vec', [5 7 9], 'set', [5 7 9]);
     var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
 else
     var{end+1} = struct('type', 'scalar', 'name', 'x_3', 'v', 5);
     var{end+1} = struct('type', 'scalar', 'name', 'x_4', 'v', 2);
 end
 
-var_param = struct('var', {var}, 'n_max', 100e3, 'fct_select', @(input, n_sol) true(1, n_sol));
+var_param = struct('var', {var}, 'n_max', 100e3, 'fct_select', @(input, n_size) true(1, n_size));
 
 end
 
-function c = get_con_c(input, n_sol)
+function c = get_con_c(input, n_size)
 
-[y_1, y_2] = get_raw(input, n_sol);
+[y_1, y_2] = get_raw(input);
 c = [y_1-10 ; y_2-10];
 
 end
 
-function ceq = get_con_ceq(input, n_sol)
+function ceq = get_con_ceq(input, n_size)
 
 ceq = [];
 
 end
 
 
-function val = get_obj_scalar(input, n_sol)
+function fval = get_obj_scalar(input, n_size)
 
-[y_1, y_2] = get_raw(input, n_sol);
-val = y_1+y_2;
-
-end
-
-function val = get_obj_vector(input, n_sol)
-
-[y_1, y_2] = get_raw(input, n_sol);
-val = [y_1 ; y_2];
+[y_1, y_2] = get_raw(input);
+fval = y_1+y_2;
 
 end
 
-function sol = get_struct(input, n_sol)
+function fval = get_obj_vector(input, n_size)
 
-[y_1, y_2] = get_raw(input, n_sol);
+[y_1, y_2] = get_raw(input);
+fval = [y_1 ; y_2];
+
+end
+
+function sol = get_output(input, n_size)
+
+[y_1, y_2] = get_raw(input);
 sol.y_1 = y_1;
 sol.y_2 = y_2;
 
 end
 
-function [y_1, y_2] = get_raw(input, n_sol)
-
-assert(n_sol>=1, 'invalid data')
+function [y_1, y_2] = get_raw(input)
 
 % assign
 x_1 = input.x_1;

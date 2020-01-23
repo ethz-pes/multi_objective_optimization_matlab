@@ -2,7 +2,7 @@ function struct_out = get_struct_idx(struct_in, idx)
 %GET_STRUCT_IDX Get specified indices in a struct of arrays.
 %   struct_out = GET_STRUCT_IDX(struct_in, idx)
 %   struct_in - input struct to be sliced (struct of arrays)
-%   idx - indices to be selected (array of indices)
+%   idx - indices to be selected (array of indices or array of logical)
 %   struct_out - output struct with the selected indices (struct of arrays)
 %
 %   The input struct should have some properties:
@@ -28,7 +28,7 @@ for i=1:length(field)
         struct_out.(field{i}) = get_struct_idx(struct_in_tmp, idx);
     else
         % for values, slicing with indices
-        assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid data')
+        assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid type')
         struct_out.(field{i}) = struct_in_tmp(idx);
     end
 end

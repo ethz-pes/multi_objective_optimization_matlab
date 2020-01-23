@@ -1,10 +1,11 @@
 function [x, fval, exitflag, output] = bruteforce(fct_obj, x0, lb, ub, fct_con, options)
 %BRUTEFORCE Brute force grid search optimization algorithm.
-%   [x, fval, exitflag, output] = BRUTEFORCE(fct_obj, x0_mat, lb, ub, fct_con, options)
+%   [x, fval, exitflag, output] = BRUTEFORCE(fct_obj, x0, lb, ub, fct_con, options)
 %   fct_obj - objective function for the optimization  (function handle)
 %      fval = fct_obj(x)
 %      x - input points (matrix)
 %      fval - objective function values (matrix or array)
+%   x0 - input points to be considered (matrix)
 %   lb - lower bound for the different variables (array or empty)
 %   ub - upper bound for the different variables (array or empty)
 %   fct_con - function with equalities and inequalities constraints (function handle)
@@ -17,7 +18,7 @@ function [x, fval, exitflag, output] = bruteforce(fct_obj, x0, lb, ub, fct_con, 
 %      options.ConstraintToleranceEq - tolerance for equalities (float)
 %   x - output valid points (matrix)
 %   fval - objective function values of the valid points (matrix or array)
-%   exitflag - return status (integer)
+%   exitflag - return status of the solver (integer)
 %      1 - valid points are found
 %      0 - no valid points
 %   output - struct with information about the solver (struct)
@@ -25,8 +26,8 @@ function [x, fval, exitflag, output] = bruteforce(fct_obj, x0, lb, ub, fct_con, 
 %      options.n_valid - number of valid points (integer)
 %
 %   This solver works with vectorized data:
-%      - n_col: number of variables
-%      - n_row: number of points
+%      - n_col - number of variables
+%      - n_row - number of points
 %
 %   The input and output arguments are strange for a brute force solver.
 %   This has been done in order to have similar arguments as the MATLAB optimization toolbox.
