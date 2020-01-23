@@ -39,6 +39,28 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_name, solver_pa
 %   Thomas Guillod.
 %   2020 - BSD License.
 
+switch solver_name
+    case 'bruteforce'
+        [sol, n_sol, has_converged, info] = get_bruteforce(solver_param, optim);
+    case {'ga', 'gamultiobj'}
+        [sol, n_sol, has_converged, info] = get_genetic(solver_name, solver_param, optim);
+    otherwise
+        error('invalid data')
+end
+
+end
+
+function [sol, n_sol, has_converged, info] = get_bruteforce(solver_param, optim)
+%GET_bruteforce Solve a multi-objective optimization with brute force.
+%   [sol, n_sol, n_sim, has_converged, info] = GET_bruteforce(solver_param, optim)
+%   solver_param - struct with the solver data (struct)
+%   optim - struct with the parsed variables (struct)
+%   sol - solution data (struct of arrays)
+%   n_sol - number points contained in the solution (integer)
+%   n_sim - number of computed points during the optimization procedure (integer)
+%   has_converged - return status of the algorithm (boolean)
+%   info - information from the solver about the convergence (struct)
+
 % extract
 fct_solve = solver_param.fct_solve;
 fct_obj = solver_param.fct_obj;
@@ -54,6 +76,7 @@ int_con = optim.int_con;
 
 % run the genetic algorithm
 disp('    init optimization')
+n_var = size(x0_mat, 2);
 
 fct_obj_tmp = @(x) get_solve_sol(x, fct_input, fct_obj, n_split);
 fct_con_cnq_tmp = @(x) get_solve_sol(x, fct_input, fct_con_cnq, n_split);
@@ -63,35 +86,103 @@ fct_solve_tmp = @(x) get_solve_sol(x, fct_input, fct_solve, n_split);
 fct_optim_tmp = @(x) get_obj(x, fct_obj_tmp);
 fct_con_tmp = @(x) get_con(x, fct_con_cnq_tmp, fct_con_ceq_tmp);
 
+keyboard
+disp('    init optimization')
+[c, ceq] = fct_con_tmp(x0_mat);
+
+[x, f_val, exitflag, output] = bruteforce(fct_optim, x0_mat, lb, ub, fct_con, options)
+
+
+
+f_val = fct_optim_tmp(x0_mat);
+
+
+
+
+
+% get the convergence info
+disp('    eval convergence')
+has_converged = true;
+n_sol = size(x, 1);
+info.n_sim = output.funccount;
+info.n_gen = output.generations;
+info.message = output.message;
+info.exitflag = exitflag;
+
+% get the solution for the optimal point
+disp('    eval solution')
+sol.f_val = f_val;
+sol.inpur = fct_input(x);
+sol.sol = fct_solve_tmp(x);
+
+end
+
+function [sol, n_sol, has_converged, info] = get_genetic(solver_name, solver_param, optim)
+%GET_ga Solve a single-objective optimization with the MATLAB genetic algorithm.
+%   [sol, n_sol, n_sim, has_converged, info] = GET_ga(solver_param, optim)
+%   solver_param - struct with the solver data (struct)
+%   optim - struct with the parsed variables (struct)
+%   sol - solution data (struct of arrays)
+%   n_sol - number points contained in the solution (integer)
+%   n_sim - number of computed points during the optimization procedure (integer)
+%   has_converged - return status of the algorithm (boolean)
+%   info - information from the solver about the convergence (struct)
+
+% extract
+fct_solve = solver_param.fct_solve;
+fct_obj = solver_param.fct_obj;
+fct_con_cnq = solver_param.fct_con_cnq;
+fct_con_ceq = solver_param.fct_con_ceq;
+n_split = solver_param.n_split;
+options = solver_param.options;
+fct_input = optim.fct_input;
+x0_mat = optim.x0_mat;
+lb = optim.lb;
+ub = optim.ub;
+int_con = optim.int_con;
+
+% set algorithm default options
+disp('    set options')
+options = optimoptions(options, 'InitialPopulation', x0_mat);
+options = optimoptions(options, 'OutputFcn', @output_fct_ga);
+options = optimoptions(options, 'Vectorized', 'on');
+options = optimoptions(options, 'Display', 'off');
+
+% run the genetic algorithm
+disp('    init optimization')
+n_var = size(x0_mat, 2);
+
+fct_obj_tmp = @(x) get_solve_sol(x, fct_input, fct_obj, n_split);
+fct_con_cnq_tmp = @(x) get_solve_sol(x, fct_input, fct_con_cnq, n_split);
+fct_con_ceq_tmp = @(x) get_solve_sol(x, fct_input, fct_con_ceq, n_split);
+fct_solve_tmp = @(x) get_solve_sol(x, fct_input, fct_solve, n_split);
+
+fct_optim_tmp = @(x) get_obj(x, fct_obj_tmp);
+fct_con_tmp = @(x) get_con(x, fct_con_cnq_tmp, fct_con_ceq_tmp);
 switch solver_name
-    case 'bruteforce'
-        [x, f_val, exitflag, output] = bruteforce(fct_optim_tmp, x0_mat, lb, ub, fct_con_tmp, options);
-        has_converged = (exitflag==1)&&isnumeric(x)&&isnumeric(f_val);
     case 'ga'
-        n_var = size(x0_mat, 2);
-        options = optimoptions(options, 'InitialPopulation', x0_mat);
-        options = optimoptions(options, 'OutputFcn', @output_fct_ga);
-        options = optimoptions(options, 'Vectorized', 'on');
-        options = optimoptions(options, 'Display', 'off');
         [x, f_val, exitflag, output] = ga(fct_optim_tmp, n_var, [], [], [], [], lb, ub, fct_con_tmp, int_con, options);
-        has_converged = any(exitflag==[0 1 3 4 5])&&isnumeric(x)&&isnumeric(f_val);
     case 'gamultiobj'
-        n_var = size(x0_mat, 2);
-        options = optimoptions(options, 'InitialPopulation', x0_mat);
-        options = optimoptions(options, 'OutputFcn', @output_fct_ga);
-        options = optimoptions(options, 'Vectorized', 'on');
-        options = optimoptions(options, 'Display', 'off');
         assert(isempty(int_con), 'invalid data')
         [x, f_val, exitflag, output] = gamultiobj(fct_optim_tmp, n_var, [], [], [], [], lb, ub, fct_con_tmp, options);
-        has_converged = any(exitflag==[0 1])&&isnumeric(x)&&isnumeric(f_val);
     otherwise
         error('invalid data')
 end
 
 % get the convergence info
 disp('    eval convergence')
+switch solver_name
+    case 'ga'
+        has_converged = any(exitflag==[0 1 3 4 5])&&isnumeric(x)&&isnumeric(f_val);
+    case 'gamultiobj'
+        has_converged = any(exitflag==[0 1])&&isnumeric(x)&&isnumeric(f_val);
+    otherwise
+        error('invalid data')
+end
 n_sol = size(x, 1);
-info.output = output;
+info.n_sim = output.funccount;
+info.n_gen = output.generations;
+info.message = output.message;
 info.exitflag = exitflag;
 
 % get the solution for the optimal point
