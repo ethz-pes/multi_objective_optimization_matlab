@@ -36,21 +36,19 @@ disp(['    n_sweep = ' num2str(n_sweep)])
 
 % solve the optimization problem
 disp('solution')
-[sol, n_sol, n_sim, has_converged, info] = get_solution(param.solver_name, param.solver_param, optim);
+[sol, n_sol, has_converged, info] = get_solution(param.solver_name, param.solver_param, optim);
 
 % display the number of solution and some other information
 disp('disp solution')
 disp(['    n_var = ' num2str(n_var)])
 disp(['    n_sweep = ' num2str(n_sweep)])
-disp(['    n_sim = ' num2str(n_sim)])
 disp(['    n_sol = ' num2str(n_sol)])
 disp(['    has_converged = ' num2str(has_converged)])
 
 % assign the results
 data.n_var = n_var;
 data.n_sweep = n_sweep;
-data.n_sim = n_sim;
-data.n_sol_valid = n_sol;
+data.n_sol = n_sol;
 data.has_converged = has_converged;
 data.info = info;
 data.sol = sol;
