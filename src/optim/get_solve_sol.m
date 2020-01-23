@@ -1,10 +1,10 @@
 function sol = get_solve_sol(x, fct_input, fct, n_split)
 %GET_SOLVE_SOL Compute and return the solution of the problem.
-%   val = GET_SOLVE_SOL(x, input, var_scale, fct_solve, fct_obj, n_split)
+%   val = GET_SOLVE_SOL(x, input, var_scale, fct, fct_obj, n_split)
 %   x - matrix containing the scaled points to be computed (matrix of float)
 %   input - struct containing the constant (non-optimized) variables (struct of scalars)
 %   var_scale - cell containing the function to unscale the variables (cell of struct)
-%   fct_solve - function computing the solution from the inputs (function handle)
+%   fct - function computing the solution from the inputs (function handle)
 %   n_split - maximum number of solution evaluated in one vectorized call (integer)
 %   sol - computed solution of the valid combinations (struct of arrays)
 %   n_sol - number points contained in the solution (integer)
@@ -31,22 +31,27 @@ else
     % parallel computing of the different chunks
     parfor i=1:n_chunk
         disp(['        ' num2str(i) ' / ' num2str(n_chunk)])
-        out{i} = get_sol_vec(input, fct, idx_chunk{i});
+        sol{i} = get_sol_vec(input, fct, idx_chunk{i});
     end
     
     % assemble the chunks together
     disp('        assemble')
-    sol = get_struct_assemble(out);
+    sol = [sol{:}];
+    if isstruct(sol)
+        sol = merge_struct(sol);
+    else
+        assert(isnumeric(sol)||islogical(sol), 'invalid data')
+    end
 end
 
 end
 
 function out_tmp = get_sol_vec(input, fct, idx_chunk)
 %GET_SOL_VEC Compute the solution and check the validity for one chunk.
-%   [sol, idx] = GET_SOL_VEC(input, sweep, fct_solve, idx))
+%   [sol, idx] = GET_SOL_VEC(input, sweep, fct, idx))
 %   input - struct containing the constant (non-optimized) variables (struct of scalars)
 %   sweep - struct containing the optimized variables (struct of arrays)
-%   fct_solve - function computing the solution from the inputs (function handle)
+%   fct - function computing the solution from the inputs (function handle)
 %   idx_chunk - indices of the combination to be computed (array of indices)
 %   sol - computed solution of the valid combinations (struct of arrays)
 

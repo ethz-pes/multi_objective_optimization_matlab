@@ -6,7 +6,7 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_name, solver_pa
 %       'ga' - MATLAB genetic algoritm 'ga'
 %       'gamultiobj' - MATLAB genetic algoritm 'gamultiobj'
 %   solver_param - struct with the solver data (struct)
-%       solver_param.fct_solve - function computing the solution from the inputs (function handle)
+%       solver_param.fct_struct - function computing the solution from the inputs (function handle)
 %       solver_param.n_split - maximum number of solution evaluated in one vectorized call (integer)
 %       solver_param - description for the brute force solver (solver_name is 'bruteforce')
 %           solver_param.fct_best - function selecting the best solutions (function handle)
@@ -40,9 +40,9 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_name, solver_pa
 %   2020 - BSD License.
 
 % extract
-fct_solve = solver_param.fct_solve;
+fct_struct = solver_param.fct_struct;
 fct_obj = solver_param.fct_obj;
-fct_con_cnq = solver_param.fct_con_cnq;
+fct_con_c = solver_param.fct_con_c;
 fct_con_ceq = solver_param.fct_con_ceq;
 n_split = solver_param.n_split;
 options = solver_param.options;
@@ -56,25 +56,25 @@ int_con = optim.int_con;
 disp('    init optimization')
 
 fct_obj_tmp = @(x) get_solve_sol(x, fct_input, fct_obj, n_split);
-fct_con_cnq_tmp = @(x) get_solve_sol(x, fct_input, fct_con_cnq, n_split);
+fct_con_c_tmp = @(x) get_solve_sol(x, fct_input, fct_con_c, n_split);
 fct_con_ceq_tmp = @(x) get_solve_sol(x, fct_input, fct_con_ceq, n_split);
-fct_solve_tmp = @(x) get_solve_sol(x, fct_input, fct_solve, n_split);
+fct_struct_tmp = @(x) get_solve_sol(x, fct_input, fct_struct, n_split);
 
-fct_optim_tmp = @(x) get_obj(x, fct_obj_tmp);
-fct_con_tmp = @(x) get_con(x, fct_con_cnq_tmp, fct_con_ceq_tmp);
+fct_obj_tmp = @(x) get_obj(x, fct_obj_tmp);
+fct_con_tmp = @(x) get_con(x, fct_con_c_tmp, fct_con_ceq_tmp);
 
 switch solver_name
     case 'bruteforce'
-        [x, f_val, exitflag, output] = bruteforce(fct_optim_tmp, x0_mat, lb, ub, fct_con_tmp, options);
-        has_converged = (exitflag==1)&&isnumeric(x)&&isnumeric(f_val);
+        [x, fval, exitflag, output] = bruteforce(fct_obj_tmp, x0_mat, lb, ub, fct_con_tmp, options);
+        has_converged = (exitflag==1)&&isnumeric(x)&&isnumeric(fval);
     case 'ga'
         n_var = size(x0_mat, 2);
         options = optimoptions(options, 'InitialPopulation', x0_mat);
         options = optimoptions(options, 'OutputFcn', @output_fct_ga);
         options = optimoptions(options, 'Vectorized', 'on');
         options = optimoptions(options, 'Display', 'off');
-        [x, f_val, exitflag, output] = ga(fct_optim_tmp, n_var, [], [], [], [], lb, ub, fct_con_tmp, int_con, options);
-        has_converged = any(exitflag==[0 1 3 4 5])&&isnumeric(x)&&isnumeric(f_val);
+        [x, fval, exitflag, output] = ga(fct_obj_tmp, n_var, [], [], [], [], lb, ub, fct_con_tmp, int_con, options);
+        has_converged = any(exitflag==[0 1 3 4 5])&&isnumeric(x)&&isnumeric(fval);
     case 'gamultiobj'
         n_var = size(x0_mat, 2);
         options = optimoptions(options, 'InitialPopulation', x0_mat);
@@ -82,8 +82,8 @@ switch solver_name
         options = optimoptions(options, 'Vectorized', 'on');
         options = optimoptions(options, 'Display', 'off');
         assert(isempty(int_con), 'invalid data')
-        [x, f_val, exitflag, output] = gamultiobj(fct_optim_tmp, n_var, [], [], [], [], lb, ub, fct_con_tmp, options);
-        has_converged = any(exitflag==[0 1])&&isnumeric(x)&&isnumeric(f_val);
+        [x, fval, exitflag, output] = gamultiobj(fct_obj_tmp, n_var, [], [], [], [], lb, ub, fct_con_tmp, options);
+        has_converged = any(exitflag==[0 1])&&isnumeric(x)&&isnumeric(fval);
     otherwise
         error('invalid data')
 end
@@ -96,9 +96,9 @@ info.exitflag = exitflag;
 
 % get the solution for the optimal point
 disp('    eval solution')
-sol.f_val = f_val;
+sol.fval = fval;
 sol.input = fct_input(x);
-sol.sol = fct_solve_tmp(x);
+sol.struct = fct_struct_tmp(x);
 
 end
 
@@ -122,9 +122,9 @@ val = val.';
 
 end
 
-function [c, ceq] = get_con(x, fct_con_cnq, fct_con_ceq)
+function [c, ceq] = get_con(x, fct_con_c, fct_con_ceq)
 
-c = fct_con_cnq(x);
+c = fct_con_c(x);
 ceq = fct_con_ceq(x);
 c = c.';
 ceq = ceq.';

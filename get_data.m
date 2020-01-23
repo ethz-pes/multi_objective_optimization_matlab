@@ -1,22 +1,12 @@
 function param = get_data(solver_name)
 
 %% options
-n_split = 500;
-
 switch solver_name
     case 'bruteforce'
         var_param = get_var_param(true);
         
         options = struct('ConstraintToleranceEq', 1e-3, 'ConstraintToleranceInEq', 1e-3);
-        
-        solver_param = struct(...
-            'n_split', n_split,...
-            'fct_solve', @get_solve,...
-            'fct_obj', @get_obj_scalar,...
-            'fct_con_cnq', @get_con_cnq,...
-            'fct_con_ceq', @get_con_ceq,...
-            'options', options...
-            );
+        solver_param = get_solr_param(false, options);
     case 'ga'
         var_param = get_var_param(true);
         
@@ -25,15 +15,7 @@ switch solver_name
         options = optimoptions(options, 'ConstraintTolerance', 1e-3);
         options = optimoptions(options, 'Generations', 20);
         options = optimoptions(options, 'PopulationSize', 2000);
-        
-        solver_param = struct(...
-            'n_split', n_split,...
-            'fct_solve', @get_solve,...
-            'fct_obj', @get_obj_scalar,...
-            'fct_con_cnq', @get_con_cnq,...
-            'fct_con_ceq', @get_con_ceq,...
-            'options', options...
-            );
+        solver_param = get_solr_param(false, options);
     case 'gamultiobj'
         var_param = get_var_param(false);
         
@@ -42,15 +24,7 @@ switch solver_name
         options = optimoptions(options, 'ConstraintTolerance', 1e-3);
         options = optimoptions(options, 'Generations', 20);
         options = optimoptions(options, 'PopulationSize', 700);
-        
-        solver_param = struct(...
-            'n_split', n_split,...
-            'fct_solve', @get_solve,...
-            'fct_obj', @get_obj_vector,...
-            'fct_con_cnq', @get_con_cnq,...
-            'fct_con_ceq', @get_con_ceq,...
-            'options', options...
-            );
+        solver_param = get_solr_param(true, options);
     otherwise
         error('invalid data')
 end
@@ -62,91 +36,19 @@ param.solver_name = solver_name;
 
 end
 
-function cnq = get_con_cnq(input, n_sol)
+function solver_param = get_solr_param(vector, options)
 
-assert(n_sol>=1, 'invalid data')
+solver_param.n_split = 500;
+solver_param.options = options;
+solver_param.fct_struct = @get_struct;
+solver_param.fct_con_c = @get_con_c;
+solver_param.fct_con_ceq = @get_con_ceq;
 
-% assign
-x_1 = input.x_1;
-x_2 = input.x_2;
-x_3 = input.x_3;
-x_4 = input.x_4;
-
-% compute
-y_1 = x_1.^2+x_2.^2+x_3;
-y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
-
-% assign
-cnq = [y_1-10 ; y_2-10];
-
+if vector==true
+    solver_param.fct_obj = @get_obj_vector;
+else
+    solver_param.fct_obj = @get_obj_scalar;
 end
-
-function ceq = get_con_ceq(input, n_sol)
-
-ceq = [];
-
-end
-
-
-function val = get_obj_scalar(input, n_sol)
-
-assert(n_sol>=1, 'invalid data')
-
-% assign
-x_1 = input.x_1;
-x_2 = input.x_2;
-x_3 = input.x_3;
-x_4 = input.x_4;
-
-% compute
-y_1 = x_1.^2+x_2.^2+x_3;
-y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
-
-% assign
-val = y_1+y_2;
-
-end
-
-function val = get_obj_vector(input, n_sol)
-
-assert(n_sol>=1, 'invalid data')
-
-% assign
-x_1 = input.x_1;
-x_2 = input.x_2;
-x_3 = input.x_3;
-x_4 = input.x_4;
-
-% compute
-y_1 = x_1.^2+x_2.^2+x_3;
-y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
-
-% assign
-val = [y_1 ; y_2];
-
-end
-
-function sol = get_solve(input, n_sol)
-
-assert(n_sol>=1, 'invalid data')
-
-% assign
-x_1 = input.x_1;
-x_2 = input.x_2;
-x_3 = input.x_3;
-x_4 = input.x_4;
-
-% compute
-y_1 = x_1.^2+x_2.^2+x_3;
-y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
-
-% assign
-sol.y_1 = y_1;
-sol.y_2 = y_2;
-sol.x_1 = x_1;
-sol.x_2 = x_2;
-sol.x_3 = x_3;
-sol.x_4 = x_4;
 
 end
 
@@ -167,3 +69,54 @@ var_param = struct('var', {var}, 'n_max', 100e3, 'fct_select', @(input, n_sol) t
 
 end
 
+function c = get_con_c(input, n_sol)
+
+[y_1, y_2] = get_raw(input, n_sol);
+c = [y_1-10 ; y_2-10];
+
+end
+
+function ceq = get_con_ceq(input, n_sol)
+
+ceq = [];
+
+end
+
+
+function val = get_obj_scalar(input, n_sol)
+
+[y_1, y_2] = get_raw(input, n_sol);
+val = y_1+y_2;
+
+end
+
+function val = get_obj_vector(input, n_sol)
+
+[y_1, y_2] = get_raw(input, n_sol);
+val = [y_1 ; y_2];
+
+end
+
+function sol = get_struct(input, n_sol)
+
+[y_1, y_2] = get_raw(input, n_sol);
+sol.y_1 = y_1;
+sol.y_2 = y_2;
+
+end
+
+function [y_1, y_2] = get_raw(input, n_sol)
+
+assert(n_sol>=1, 'invalid data')
+
+% assign
+x_1 = input.x_1;
+x_2 = input.x_2;
+x_3 = input.x_3;
+x_4 = input.x_4;
+
+% compute
+y_1 = x_1.^2+x_2.^2+x_3;
+y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
+
+end

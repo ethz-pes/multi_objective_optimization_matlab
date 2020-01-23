@@ -14,12 +14,11 @@ param = get_data('gamultiobj');
 data_gamultiobj = get_optim('gamultiobj', param);
 
 %% plot
-fprintf('%.3f / %.3f\n', data_ga.sol.sol.y_1, data_ga.sol.sol.y_2)
-
 figure()
-plot(data_brute.sol.sol.y_1, data_brute.sol.sol.y_2, 'xb')
+plot(data_brute.sol.struct.y_1, data_brute.sol.struct.y_2, 'xb')
 hold('on')
-plot(data_gamultiobj.sol.sol.y_1, data_gamultiobj.sol.sol.y_2, 'dr')
+plot(data_gamultiobj.sol.struct.y_1, data_gamultiobj.sol.struct.y_2, 'dr')
+plot(data_ga.sol.struct.y_1, data_ga.sol.struct.y_2, 'og')
 grid('on')
 xlabel('y_{1}')
 ylabel('y_{2}')

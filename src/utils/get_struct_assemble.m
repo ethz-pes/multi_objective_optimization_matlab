@@ -8,24 +8,12 @@ function struct_out = get_struct_assemble(struct_in)
 %      - Struct can be nested (the function is recursive)
 %      - The values of the struct should be 'numeric' or 'logical' arrays
 %      - The values are concatenated respecting the input order
+%      - The arrays are row arrays.
 %
 %   See also GET_STRUCT_IDX, GET_STRUCT_SIZE.
 
 %   Thomas Guillod.
 %   2020 - BSD License.
-
-struct_in = [struct_in{:}];
-
-if isstruct(struct_in)
-    struct_out = merge_struct(struct_in);
-else
-    assert(isnumeric(struct_in)||islogical(struct_in), 'invalid data')
-    struct_out = struct_in;
-end
-
-end
-
-function struct_out = merge_struct(struct_in)
 
 % init the data
 struct_out = struct();
