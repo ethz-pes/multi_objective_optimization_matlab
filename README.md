@@ -1,14 +1,14 @@
-# MATLAB tool for multi-objective optimization (genetic or brute-force)
+# MATLAB tool for multi-objective optimization
 
 This **MATLAB** tool offers different functionalities for multi-objective optimization:
 * Offer a **common interface** for different solvers
     * **Brute force** grid search (exhaustive search)
-    * MATLAB **single-objective genetic** algoritm ('ga')
-    * MATLAB **multi-objective genetic** algoritm ('gamultiobj')
+    * MATLAB **single-objective genetic** algorithm ('ga')
+    * MATLAB **multi-objective genetic** algorithm itm ('gamultiobj')
 * Offer an **abstraction layer** to the MATLAB solver
     * Scaling the input variables
     * Generating and filtering initial points
-    * Transforming high-level datastructures ('struct') to low-level ('matrix')
+    * Transforming high-level data structures ('struct') to low-level ('matrix')
     * Generating the low-level inputs required by the solvers
 * Allow **vectorized and parallel** evaluation of the functions
     * Divide the number of points to be evaluated into chunks

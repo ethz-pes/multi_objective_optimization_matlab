@@ -4,8 +4,8 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_param, optim)
 %   solver_param.solver_param - struct with the solver data (struct)
 %      solver_name - name of the solver (string)
 %         'bruteforce' - test all the initial points, nothing more
-%         'ga' - MATLAB genetic algoritm 'ga'
-%         'gamultiobj' - MATLAB genetic algoritm 'gamultiobj'
+%         'ga' - MATLAB genetic algorithm 'ga'
+%         'gamultiobj' - MATLAB genetic algorithm 'gamultiobj'
 %      solver_param.n_split - maximum number of solution evaluated in one vectorized call (integer)
 %      solver_param.options - options for the solver (GaOptions or GamultiobjOptions or struct)
 %      fct_obj - compute the objective value from the input (function handle)

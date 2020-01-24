@@ -15,8 +15,8 @@ function [var_param, solver_param] = get_data(solver_name)
 %
 %   Use the followig strategies:
 %      - brute force grid search (mixed integer)
-%      - single-objective genetic algoritm (mixed integer)
-%      - multi-objective genetic algoritm (continuous variables)
+%      - single-objective genetic algorithm (mixed integer)
+%      - multi-objective genetic algorithm (continuous variables)
 %
 %   The problem solved in this example is trivial and not very interesting.
 %
