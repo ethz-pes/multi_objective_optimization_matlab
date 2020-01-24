@@ -1,6 +1,6 @@
-function data = get_optim(name, var_param, solver_param)
-%GET_OPTIM Solve a multi-objective optimization problem with different solvers.
-%   data = GET_OPTIM(name, var_param, solver_param)
+function data = get_multi_obj_opt(name, var_param, solver_param)
+%GET_MULTI_OBJ_OPT Solve a multi-objective optimization problem with different solvers.
+%   data = GET_MULTI_OBJ_OPT(name, var_param, solver_param)
 %   name - name of the problem (string)
 %   var_param - struct with the variable description (struct)
 %   solver_param - struct with the solver data (struct)

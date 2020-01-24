@@ -52,7 +52,7 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_param, optim)
 %   This function performs optimization with different solvers.
 %   Please note that the 'gamultiobj' cannot deal with integer variables.
 %
-%   See also GET_OPTIM, GET_PRE_PROC, GET_VECTORIZED, BRUTEFORCE, GA GAMULTIOBJ.
+%   See also GET_MULTI_OBJ_OPT, GET_PRE_PROC, GET_VECTORIZED, BRUTEFORCE, GA GAMULTIOBJ.
 
 %   Thomas Guillod.
 %   2020 - BSD License.

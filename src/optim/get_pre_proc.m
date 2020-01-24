@@ -50,7 +50,7 @@ function [optim, n_var, n_init] = get_pre_proc(var_param)
 %         - Scale the 'float' variables with 'lin', 'log', 'exp', 'square', or 'sqrt'
 %         - Mapping integer variables from [x1, x1, ..., xn] to [1, 2, ..., n]
 %
-%   See also GET_OPTIM, GET_SOLUTION.
+%   See also GET_MULTI_OBJ_OPT, GET_SOLUTION.
 
 %   Thomas Guillod.
 %   2020 - BSD License.

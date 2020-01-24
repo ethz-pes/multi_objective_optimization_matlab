@@ -9,7 +9,8 @@ function [var_param, solver_param] = get_data(solver_name)
 %      - Integer variables
 %      - Upper and lower bounds
 %      - Inequality constraints
-%      - Inequality constraints
+%      - Equality constraints
+%      - Non continuous objective function
 %      - Single-objective or multi-objective goals
 %
 %   Use the followig strategies:
@@ -17,7 +18,9 @@ function [var_param, solver_param] = get_data(solver_name)
 %      - single-objective genetic algoritm (mixed integer)
 %      - multi-objective genetic algoritm (continuous variables)
 %
-%   See also RUN_OPTIM, GET_OPTIM, GET_PRE_PROC, GET_SOLUTION.
+%   The problem solved in this example is trivial and not very interesting.
+%
+%   See also RUN_OPTIM, GET_MULTI_OBJ_OPT, GET_PRE_PROC, GET_SOLUTION.
 
 %   Thomas Guillod.
 %   2020 - BSD License.
@@ -183,7 +186,7 @@ x_3 = input.x_3;
 x_4 = input.x_4;
 
 % compute
-y_1 = x_1.^2+x_2.^2+x_3;
+y_1 = x_1.^2+(x_2-2).^2+x_3;
 y_2 = 0.5*((x_1-2).^2+(x_2+1).^2)+2+x_4;
 
 end
