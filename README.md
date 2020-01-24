@@ -40,8 +40,9 @@ Adding support for non vectorized solvers ('fmincon', 'fminbnd', or 'fminsearch'
 ## Compatibility
 
 * Tested with MATLAB R2018b.
-* Required the gads_toolbox (for contour detection).
-* Required the optimization_toolbox (for contour simplification).
+* Requires the gads_toolbox (for the MATLAB solvers).
+* Requires the optimization_toolbox (for the MATLAB solvers).
+* Requires the distrib_computing_toolbox (for parfor)
 * Compatibility with GNU Octave not tested but probably problematic.
 
 ## Author
