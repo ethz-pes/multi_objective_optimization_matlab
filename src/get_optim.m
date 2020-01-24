@@ -1,10 +1,9 @@
-function data = get_optim(name, param)
+function data = get_optim(name, var_param, solver_param)
 %GET_OPTIM Solve a multi-objective optimization problem with different solvers.
-%   data = GET_OPTIM(name, param)
-%   param - struct describing the problem and the solver (struct)
-%      data.var_param - struct with the variable description (struct)
-%      data.solver_name - string with the solver name (string)
-%      data.solver_param - struct with the solver data (struct)
+%   data = GET_OPTIM(name, var_param, solver_param)
+%   name - name of the problem (string)
+%   var_param - struct with the variable description (struct)
+%   solver_param - struct with the solver data (struct)
 %   data - struct containing the solution (struct)
 %      data.n_var - number of input variables used for the optimization (integer)
 %      data.n_init - number of initial points used by the algorithm (integer)
@@ -18,8 +17,8 @@ function data = get_optim(name, param)
 %         data.sol.input - struct with the valid points (struct of arrays)
 %         data.sol.output - struct with the generated output (struct of arrays)
 %
-%   For more information about data.var_param, see 'get_pre_proc'.
-%   For more information about data.solver_name and data.solver_param, see 'get_solution'.
+%   For more information about 'data.var_param', see 'get_pre_proc'.
+%   For more information about 'data.solver_param', see 'get_solution'.
 %
 %   This multi-objective optimization works in two steps
 %      - 'get_pre_proc' - extract and scale the variables, get the intial points
@@ -40,7 +39,7 @@ disp(['============================= ' name])
 
 % parse the optimization variables
 disp('pre_proc')
-[optim, n_var, n_init] = get_pre_proc(param.var_param);
+[optim, n_var, n_init] = get_pre_proc(var_param);
 
 % display the number of variables and initial points
 disp('disp pre_proc')
@@ -49,7 +48,7 @@ disp(['    n_init = ' num2str(n_init)])
 
 % solve the optimization problem
 disp('solution')
-[sol, n_sol, has_converged, info] = get_solution(param.solver_name, param.solver_param, optim);
+[sol, n_sol, has_converged, info] = get_solution(solver_param, optim);
 
 % display the number of solution and some other information
 disp('disp solution')

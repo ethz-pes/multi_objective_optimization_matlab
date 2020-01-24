@@ -1,11 +1,11 @@
-function [sol, n_sol, has_converged, info] = get_solution(solver_name, solver_param, optim)
+function [sol, n_sol, has_converged, info] = get_solution(solver_param, optim)
 %GET_SOLUTION Solve the multi-objective optimization problem with different solvers.
-%   [sol, n_sol, n_sim, has_converged, info] = GET_SOLUTION(solver_name, solver_param, optim)
-%   solver_name - name of the solver (string)
-%      'bruteforce' - test all the initial points, nothing more
-%      'ga' - MATLAB genetic algoritm 'ga'
-%      'gamultiobj' - MATLAB genetic algoritm 'gamultiobj'
-%   solver_param - struct with the solver data (struct)
+%   [sol, n_sol, n_sim, has_converged, info] = GET_SOLUTION(solver_param, optim)
+%   solver_param.solver_param - struct with the solver data (struct)
+%      solver_name - name of the solver (string)
+%         'bruteforce' - test all the initial points, nothing more
+%         'ga' - MATLAB genetic algoritm 'ga'
+%         'gamultiobj' - MATLAB genetic algoritm 'gamultiobj'
 %      solver_param.n_split - maximum number of solution evaluated in one vectorized call (integer)
 %      solver_param.options - options for the solver (GaOptions or GamultiobjOptions or struct)
 %      fct_obj - compute the objective value from the input (function handle)
@@ -17,12 +17,12 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_name, solver_pa
 %         c = fct_obj(input, n_size);
 %         input - parsed and scaled input points (struct of arrays)
 %         n_size - number of points (integer)
-%         c - inequalities contraints, c<0 (matrix or array or empty)
+%         c - inequalities contraints, c<0 (matrix or empty)
 %      fct_con_ceq - compute the equalities contraints from the input (function handle)
 %         ceq = fct_obj(input, n_size);
 %         input - parsed and scaled input points (struct of arrays)
 %         n_size - number of points (integer)
-%         ceq - equalities contraints, c<0 (matrix or array or empty)
+%         ceq - equalities contraints, ceq==0 (matrix or empty)
 %      fct_output - compute the output struct from the input (function handle)
 %         output = fct_obj(input, n_size);
 %         input - parsed and scaled input points (struct of arrays)
@@ -58,6 +58,7 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_name, solver_pa
 %   2020 - BSD License.
 
 % extract
+solver_name = solver_param.solver_name;
 fct_output = solver_param.fct_output;
 fct_obj = solver_param.fct_obj;
 fct_con_c = solver_param.fct_con_c;
