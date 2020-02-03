@@ -15,7 +15,7 @@ This **MATLAB** tool offers different functionalities for multi-objective optimi
     * Evaluate the chunks with parallel computing ('parfor')
     * The points inside a chunk are evaluated in a vectorized way
 
-Mathematically, the following optimization problem are solved:
+Mathematically, the following optimization problems are solved:
 * Multiple variables
 * Integer variables
 * Upper and lower bounds
@@ -42,7 +42,7 @@ Adding support for non vectorized solvers ('fmincon', 'fminbnd', or 'fminsearch'
 * Tested with MATLAB R2018b.
 * Requires the gads_toolbox (for the MATLAB solvers).
 * Requires the optimization_toolbox (for the MATLAB solvers).
-* Requires the distrib_computing_toolbox (for parfor)
+* Requires the distrib_computing_toolbox (for parfor loops)
 * Compatibility with GNU Octave not tested but probably problematic.
 
 ## Author

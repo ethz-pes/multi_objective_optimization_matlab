@@ -20,7 +20,7 @@ function data = get_multi_obj_opt(name, var_param, solver_param)
 %   For more information about 'data.var_param', see 'get_pre_proc'.
 %   For more information about 'data.solver_param', see 'get_solution'.
 %
-%   This multi-objective optimization works in two steps
+%   This multi-objective optimization works in two steps:
 %      - 'get_pre_proc' - extract and scale the variables, get the intial points
 %      - 'get_solution' - solve the problem with different solvers
 %
