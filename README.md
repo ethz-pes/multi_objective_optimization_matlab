@@ -4,7 +4,7 @@ This **MATLAB** tool offers different functionalities for multi-objective optimi
 * Offer a **common interface** for different solvers
     * **Brute force** grid search (exhaustive search)
     * MATLAB **single-objective genetic** algorithm ('ga')
-    * MATLAB **multi-objective genetic** algorithm itm ('gamultiobj')
+    * MATLAB **multi-objective genetic** algorithm ('gamultiobj')
 * Offer an **abstraction layer** to the MATLAB solver
     * Scaling the input variables
     * Generating and filtering initial points
