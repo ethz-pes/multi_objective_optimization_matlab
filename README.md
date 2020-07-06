@@ -24,6 +24,8 @@ Mathematically, the following optimization problems are solved:
 * Non continuous objective function
 * Single-objective or multi-objective goals
 
+## Example
+
 Look at the example [run_example.m](run_example.m) which generates the following results:
 
 <p float="middle">
