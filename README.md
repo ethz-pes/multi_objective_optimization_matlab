@@ -1,4 +1,4 @@
-# MATLAB tool for multi-objective optimization
+# MATLAB Tool for Multi-Objective Optimization
 
 This **MATLAB** tool offers different functionalities for multi-objective optimization:
 * Offer a **common interface** for different solvers
