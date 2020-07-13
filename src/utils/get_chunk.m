@@ -9,9 +9,8 @@ function [n_chunk, idx_chunk] = get_chunk(n_size, n_split)
 %   The division of computational data is useful:
 %      - Dividing the data for parallel loop (loop)
 %      - Reducing the data in the memory while computing
-
-%   Thomas Guillod.
-%   2020 - BSD License.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % init the data
 idx = 1;

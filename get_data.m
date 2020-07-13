@@ -21,9 +21,8 @@ function [var_param, solver_param] = get_data(solver_name)
 %   The problem solved in this example is trivial and not very interesting.
 %
 %   See also RUN_OPTIM, GET_MULTI_OBJ_OPT, GET_PRE_PROC, GET_SOLUTION.
-
-%   Thomas Guillod.
-%   2020 - BSD License.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 switch solver_name
     case 'bruteforce'

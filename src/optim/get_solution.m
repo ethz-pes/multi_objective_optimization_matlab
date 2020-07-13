@@ -53,9 +53,8 @@ function [sol, n_sol, has_converged, info] = get_solution(solver_param, optim)
 %   Please note that the 'gamultiobj' cannot deal with integer variables.
 %
 %   See also GET_MULTI_OBJ_OPT, GET_PRE_PROC, GET_VECTORIZED, BRUTEFORCE, GA GAMULTIOBJ.
-
-%   Thomas Guillod.
-%   2020 - BSD License.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % extract
 solver_name = solver_param.solver_name;

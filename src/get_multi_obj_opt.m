@@ -30,9 +30,8 @@ function data = get_multi_obj_opt(name, var_param, solver_param)
 %      - 'gamultiobj' - multi-objective genetic optimization
 %
 %   See also GET_PRE_PROC, GET_SOLUTION.
-
-%   Thomas Guillod.
-%   2020 - BSD License.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % init the simulation
 disp(['============================= ' name])

@@ -51,9 +51,8 @@ function [optim, n_var, n_init] = get_pre_proc(var_param)
 %         - Mapping integer variables from [x1, x1, ..., xn] to [1, 2, ..., n]
 %
 %   See also GET_MULTI_OBJ_OPT, GET_SOLUTION.
-
-%   Thomas Guillod.
-%   2020 - BSD License.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % extract the provided data
 var = var_param.var;

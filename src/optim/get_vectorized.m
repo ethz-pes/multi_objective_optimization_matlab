@@ -22,6 +22,8 @@ function sol = get_vectorized(x, fct_input, fct_sol, n_split)
 %      - Assemble the different chunks together
 %
 %   See also GET_SOLUTION, GET_CHUNK.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % parse and unscale the variable
 disp('        get var')

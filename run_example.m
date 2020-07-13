@@ -4,9 +4,8 @@ function run_example()
 %   The description of the problem can be found in 'get_data'.
 %
 %   See also GET_MULTI_OBJ_OPT, GET_DATA.
-
-%   Thomas Guillod.
-%   2020 - BSD License.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 close('all')
 addpath(genpath('src'))

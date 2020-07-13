@@ -24,6 +24,8 @@ Mathematically, the following optimization problems are solved:
 * Non continuous objective function
 * Single-objective or multi-objective goals
 
+This tool is developed by the **Power Electronic Systems Laboratory at ETH Zurich** and is available under the **BSD License**. The code is also available on the ETH Data Archive.
+
 ## Example
 
 Look at the example [run_example.m](run_example.m) which generates the following results:
@@ -49,8 +51,9 @@ Adding support for non vectorized solvers ('fmincon', 'fminbnd', or 'fminsearch'
 
 ## Author
 
-**Thomas Guillod** - [GitHub Profile](https://github.com/otvam)
+* **Thomas Guillod, ETH Zurich, Power Electronic Systems Laboratory** - [GitHub Profile](https://github.com/otvam)
 
 ## License
 
-This project is licensed under the **BSD License**, see [LICENSE.md](LICENSE.md).
+* This project is licensed under the **BSD License**, see [LICENSE.md](LICENSE.md).
+* This project is copyrighted by: (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod.

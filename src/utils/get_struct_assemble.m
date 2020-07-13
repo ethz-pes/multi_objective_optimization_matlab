@@ -12,9 +12,8 @@ function struct_out = get_struct_assemble(struct_in, n_size)
 %      - The arrays are row arrays.
 %
 %   See also GET_STRUCT_IDX, GET_STRUCT_SIZE.
-
-%   Thomas Guillod.
-%   2020 - BSD License.
+%
+%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % init the data
 struct_out = struct();
