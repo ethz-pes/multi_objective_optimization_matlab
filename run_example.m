@@ -5,7 +5,7 @@ function run_example()
 %
 %   See also GET_MULTI_OBJ_OPT, GET_DATA.
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 close('all')
 addpath(genpath('src'))

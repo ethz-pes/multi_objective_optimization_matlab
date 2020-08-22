@@ -13,7 +13,7 @@ function struct_out = get_struct_assemble(struct_in, n_size)
 %
 %   See also GET_STRUCT_IDX, GET_STRUCT_SIZE.
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % init the data
 struct_out = struct();

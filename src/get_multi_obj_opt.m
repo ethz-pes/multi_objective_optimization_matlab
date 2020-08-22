@@ -31,7 +31,7 @@ function data = get_multi_obj_opt(name, var_param, solver_param)
 %
 %   See also GET_PRE_PROC, GET_SOLUTION.
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % init the simulation
 disp(['============================= ' name])

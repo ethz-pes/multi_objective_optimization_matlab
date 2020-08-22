@@ -22,7 +22,7 @@ function [var_param, solver_param] = get_data(solver_name)
 %
 %   See also RUN_OPTIM, GET_MULTI_OBJ_OPT, GET_PRE_PROC, GET_SOLUTION.
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 switch solver_name
     case 'bruteforce'

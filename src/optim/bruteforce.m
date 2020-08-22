@@ -32,7 +32,7 @@ function [x, fval, exitflag, output] = bruteforce(fct_obj, x0, lb, ub, fct_con, 
 %   The input and output arguments are strange for a brute force solver.
 %   This has been done in order to have similar arguments as the MATLAB optimization toolbox.
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % number of points
 n_sim = size(x0, 1);

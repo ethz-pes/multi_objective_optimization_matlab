@@ -10,7 +10,7 @@ function [n_chunk, idx_chunk] = get_chunk(n_size, n_split)
 %      - Dividing the data for parallel loop (loop)
 %      - Reducing the data in the memory while computing
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % init the data
 idx = 1;

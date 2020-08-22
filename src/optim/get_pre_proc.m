@@ -52,7 +52,7 @@ function [optim, n_var, n_init] = get_pre_proc(var_param)
 %
 %   See also GET_MULTI_OBJ_OPT, GET_SOLUTION.
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % extract the provided data
 var = var_param.var;

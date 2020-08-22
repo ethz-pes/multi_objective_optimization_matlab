@@ -56,4 +56,4 @@ Adding support for non vectorized solvers ('fmincon', 'fminbnd', or 'fminsearch'
 ## License
 
 * This project is licensed under the **BSD License**, see [LICENSE.md](LICENSE.md).
-* This project is copyrighted by: (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod.
+* This project is copyrighted by: (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod.

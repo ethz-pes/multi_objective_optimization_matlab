@@ -23,7 +23,7 @@ function sol = get_vectorized(x, fct_input, fct_sol, n_split)
 %
 %   See also GET_SOLUTION, GET_CHUNK.
 %
-%   (c) 2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
+%   (c) 2019-2020, ETH Zurich, Power Electronic Systems Laboratory, T. Guillod
 
 % parse and unscale the variable
 disp('        get var')
