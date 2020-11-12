@@ -53,6 +53,13 @@ Adding support for non vectorized solvers ('fmincon', 'fminbnd', or 'fminsearch'
 
 * **Thomas Guillod, ETH Zurich, Power Electronic Systems Laboratory** - [GitHub Profile](https://github.com/otvam)
 
+## Function calling structure
+
+<p float="middle">
+    <img src="readme_img/CallerStructure.png" width="800">
+</p>
+
+
 ## License
 
 * This project is licensed under the **BSD License**, see [LICENSE.md](LICENSE.md).
