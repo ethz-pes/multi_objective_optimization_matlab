@@ -1,5 +1,10 @@
 # MATLAB Tool for Multi-Objective Optimization
 
+![license - BSD](https://img.shields.io/badge/license-BSD-green)
+![language - MATLAB](https://img.shields.io/badge/language-MATLAB-blue)
+![category - science](https://img.shields.io/badge/category-science-lightgrey)
+![status - maintained](https://img.shields.io/badge/status-maintained-green)
+
 This **MATLAB** tool offers different functionalities for multi-objective optimization:
 * Offer a **common interface** for different solvers
     * **Brute force** grid search (exhaustive search)
