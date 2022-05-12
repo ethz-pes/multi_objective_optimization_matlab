@@ -49,9 +49,9 @@ Adding support for non vectorized solvers ('fmincon', 'fminbnd', or 'fminsearch'
 ## Compatibility
 
 * Tested with MATLAB R2018b.
-* Requires the gads_toolbox (for the MATLAB solvers).
-* Requires the optimization_toolbox (for the MATLAB solvers).
-* Requires the distrib_computing_toolbox (for parfor loops)
+* The `gads_toolbox` is required (for the MATLAB solvers).
+* The `optimization_toolbox` is required (for the MATLAB solvers).
+* The `distrib_computing_toolbox` is required (for parfor loops)
 * Compatibility with GNU Octave not tested but probably problematic.
 
 ## Author
