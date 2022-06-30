@@ -26,7 +26,7 @@ for i=1:length(field)
     
     if isstruct(struct_in_tmp)
         % for struct, recursion
-        struct_out.(field{i}) = merge_struct(struct_in_tmp, n_size);
+        struct_out.(field{i}) = get_struct_assemble(struct_in_tmp, n_size);
     else
         % for values, assign
         assert(isnumeric(struct_in_tmp)||islogical(struct_in_tmp), 'invalid type')
