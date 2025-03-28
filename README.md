@@ -29,8 +29,6 @@ Mathematically, the following optimization problems are solved:
 * Non continuous objective function
 * Single-objective or multi-objective goals
 
-This tool is developed by the **Power Electronic Systems Laboratory at ETH Zurich** and is available under the **BSD License**. The code is also available on the ETH Data Archive.
-
 ## Example
 
 Look at the example [run_example.m](run_example.m) which generates the following results:
